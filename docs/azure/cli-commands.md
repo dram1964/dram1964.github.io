@@ -1,6 +1,8 @@
+---
 layout: page
 title: "Azure CLI Notes"
 permalink: /docs/azure/cli-commands
+---
 
 
 List account keys:
