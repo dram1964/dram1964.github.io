@@ -2,10 +2,31 @@
 layout: page
 title: "Azure CLI Notes"
 permalink: /azure/cli-commands
+stgname: "&lt;<i>stgname&gt;</i>"
+containername: "&lt;<i>containername</i>&gt;"
+localfile: "&lt;<i>./local/path/filename.csv</i>&gt;"
+localfolder: "&lt;<i>./local/path</i>&gt;"
+containerfile: "&lt;<i>container/path/filename.csv</i>&gt;"
+containerfolder: "&lt;<i>container/path</i>&gt;"
 ---
 
+<h1>Storage</h1>
+<p>Add a container to your Storage Account</p>
+<pre>
+az storage container create --name {{ page.containername }} --account-name {{ page.stgname }}
+</pre>
+
+<p>Upload a file to blob storage</p>
+<pre>
+az storage blob upload --account-name {{ page.stgname }} --container-name {{ page.containername }} --file {{ page.localfile }} --name {{ page.containerfile }}
+</pre>
+
+<p>Upload a folder to blob storage</p>
+<pre>
+az storage blob upload-batch --destination {{ page.containername }} --account-name {{ page.stgname }} --destination-path {{ page.containerfolder }} --source {{ page.localfolder }}
+</pre>
 
 <p>List Storage Account SAS keys:</p>
 <pre>
-az storage account keys list --account-name &lt;name_of_account&gt;
+az storage account keys list --account-name {{ page.stgname }}
 </pre>
