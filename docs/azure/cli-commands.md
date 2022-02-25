@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Azure CLI Notes"
-permalink: /docs/azure/cli-commands
+permalink: /azure/cli-commands
 ---
 
 
