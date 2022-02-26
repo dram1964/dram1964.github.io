@@ -10,6 +10,54 @@ containerfile: "&lt;<i>container/path/filename.csv</i>&gt;"
 containerfolder: "&lt;<i>container/path</i>&gt;"
 ---
 
+<h1>JMES Query Syntax for AZ CLI commands</h1>
+<cite><a href="https://techcommunity.microsoft.com/t5/itops-talk-blog/how-to-query-azure-resources-using-the-azure-cli/ba-p/360147">How to query Azure resources using the Azure CLI</a></cite>
+<p>By default, az cli queries return JSON output. You can change the output format
+using the --output switch. Typical values are either 'table' or 'tsv'. </p>
+<p>The query option can be used to filter the fields returned. Where a command 
+returns a single row in table output, you can query by field name:</p>
+<pre>
+az account show --query id
+</pre>
+<p>For commands returning more than one row or object, you need to use the 'flatten' operator in the query:</p>
+<pre>
+az account list --query [].id -o table
+</pre>
+<p>To return multiple values in the output, specify these in a comma separated list</p>
+<pre>
+az account list --query [].[id,name] -o table
+</pre>
+<p>You can rename the columns by specifying a dictionary instead of an array: note that the query is now in double-quotes</p>
+<pre>
+az account list --query "[].{Subscription:id,Name:name}" -o table
+</pre>
+<p>You can also specify an index value to return a specific row: indexes begin at 0 for the first element</p>
+<pre>
+az account list --query "[1].{Subscription:id,Name:name}" -o table
+</pre>
+<p>An array slice can also be used:</p>
+<pre>
+az account list --query "[1:4].{Subscription:id,Name:name}" -o table
+</pre>
+<p>The slice specification equates to: "return the element at index 1 and all 
+elements up to, but not including, the element at index 4". Three elements (4 - 1) are returned</p> 
+<p>In addition to using array indexing, you can filter the results using filter 
+expressions:</p>
+<pre>
+az account list --query "[?contains(name, 'sub')].{Subscription:id,Name:name}" -o table
+</pre>
+<p>So far we've been selecting fields that return a scalar value. However some fields will be dictionaries: use the dot operator to select a single element from each dictionary:</p>
+<pre>
+az account list --query "[].[user.type]" -o table
+</pre>
+<p>If the query returns a single row, you can use the tsv output format to assign the value to a variable or to directly use the value in a command:</p>
+<pre>
+SUB=$(az account list --query "[?contains(name, 'research')].[id]" -o tsv)
+az account set --subscription $SUB
+
+az account set --subscription $(az account list --query "[?contains(name, 'research')].[id]" -o tsv)
+</pre>
+
 <h1>Storage</h1>
 <p>Add a container to your Storage Account</p>
 <pre>
