@@ -4,5 +4,31 @@ title: "Azure Terraform Notes"
 permalink: /azure/terraform
 ---
 
-<h1>Store Terraform State in Azure</h1>
-<p>Create a resource group and storage account in Azure and use this in your backend</p>
+<h1>Terraform Architecture</h1>
+<p>Terraform is a tool to consume upstream APIs. The Azure REST API exposes a client library that 
+encapsulates the request-response objects of the API. The Terraform Azure provider uses this 
+client library to connect and invoke remote API endpoints for Azure. Each provider is a plugin
+that be added to the Terraform core, allowing Terraform to interact with multiple upstream APIs</p>
+<p>Terraform maintains a state file that is created the first time a Terraform configuration is 
+executed in a working directory. The state file is a JSON representation of the remote
+infrastructure and is used by Terraform to plan and execute the changes to be made to the 
+infrastructure when Terraform commands are run.</p>
+<p>HCL scripts are used to declare the desired state using a series of code blocks. Each block has a type and serves a specific purpose:</p>
+<dl>
+  <dt>terraform</dt>
+  <dd>The terraform block is used to configure the terraform version, which providers will be used and the backend for the configuration</dd>
+  <dt>provider</dt>
+  <dd>Used to configure provider plugins</dd>
+  <dt>variable</dt>
+  <dd>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</dd>
+  <dt>resource</dt>
+  <dd>Used to represent a resource instance in the remote infrastructure that will be managed by terraform. The resource block defines the desired resource configuration</dd>
+  <dt>output</dt>
+  <dd>Used to generate output values when terraform commands are run</dd>
+  <dt>data</dt>
+  <dd>blank for now</dd>
+  <dt>module</dt>
+  <dd>blank for now</dd>
+  <dt>locals</dt>
+  <dd>blank for now</dd>
+</dl>
