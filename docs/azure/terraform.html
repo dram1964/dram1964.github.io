@@ -4,6 +4,12 @@ title: "Azure Terraform Notes"
 permalink: /azure/terraform
 ---
 
+<p>Useful notes on variables:</p>
+<ul>
+  <li><a href="https://upcloud.com/community/tutorials/terraform-variables/">Upcloud</a></li>
+  <li><a href="https://dev.to/pwd9000/terraform-complex-variable-types-173e">Dev Community</a></li>
+</ul>
+
 <h1>Terraform Architecture</h1>
 <p>Terraform is a tool to consume upstream APIs. The Azure REST API exposes a client library that 
 encapsulates the request-response objects of the API. The Terraform Azure provider uses this 
@@ -13,6 +19,7 @@ that be added to the Terraform core, allowing Terraform to interact with multipl
 executed in a working directory. The state file is a JSON representation of the remote
 infrastructure and is used by Terraform to plan and execute the changes to be made to the 
 infrastructure when Terraform commands are run.</p>
+<h1>Terraform Scripts</h1>
 <p>HCL scripts are used to declare the desired state using a series of code blocks. Each block has a type and serves a specific purpose:</p>
 <dl>
   <dt>terraform</dt>
@@ -24,7 +31,8 @@ infrastructure when Terraform commands are run.</p>
   <dt>resource</dt>
   <dd>Used to represent a resource instance in the remote infrastructure that will be managed by terraform. The resource block defines the desired resource configuration</dd>
   <dt>output</dt>
-  <dd>Used to generate output values when terraform commands are run</dd>
+  <dd>Used to get information about the infrastructure after deployment. The 'terraform output' 
+  command can also be used to retrieve the value of an output variable.</dd>
   <dt>data</dt>
   <dd>blank for now</dd>
   <dt>module</dt>
@@ -32,3 +40,189 @@ infrastructure when Terraform commands are run.</p>
   <dt>locals</dt>
   <dd>blank for now</dd>
 </dl>
+<h1>Terraform Workflow</h1>
+<p>The general workflow for deploying infrastructure in Terraform is:</p>
+<ol>
+  <li>Initialise the working directory (terraform init)</li>
+  <li>Validate the scripts (terraform validate)</li>
+  <li>Run the plan (terraform plan)</li>
+  <li>Deploy the infrastructure (terraform apply)</li>
+</ol>
+<p>Terraform 'init' is executed in the directory containing the Terraform scripts 
+and will initialise the state file and download required providers and modules 
+defined by the scripts. Modules and providers are downloaded and stored in the 
+hidden '.terraform' folder in the working directory.</p>
+<p>Terraform 'validate' can be used to validate the syntax of the scripts in the 
+working directory: there is also a 'fmt' command available to apply best 
+practice formatting to the scripts</p>
+<p>
+<p>The 'terraform plan' command is used to determine what changes will be 
+made when the scripts are applied. It compares the target infrastructure to the 
+current state file and then compares the declared configuration to the state 
+file. The difference between the two allows terraform to determine what changes
+need to be made when the configuration is applied and to output these changes as
+a plan</p>
+<p>After reviewing the plan, 'terraform apply' can be used to apply the 
+desired configuration as defined in the scripts to the target infrastructure. 
+If the apply is successful, Terraform generates a state file which, by default, 
+is strored in the current working directory as 'terraform.tfstate'.</p>
+
+<h1>Terraform Variables</h1>
+<p>Terraform variable blocks allow an existing configuration to be tailored 
+using external input values. A variable block starts with the keyword 'variable' 
+followed by the variable name and a block of attributes associated to the variable.
+These attributes include:</p>
+<ul>
+  <li>type ("string", "bool", "number", "object", "map", "list", "tuple", "sets", "any")</li>
+  <li>default: a default value to use if none is supplied</li>
+  <li>description: a text string explaining the use of the variable</li>
+  <li>validation: a block with code used to validate the value supplied for the variable</li>
+  <li>sensitive: a boolean value to determine if the variable value is displayed by the Terraform CLI</li>
+</ul>
+<p>Variables and their default values can be declared within the same scripts that you use to define
+your infrastructure code. However, it is often preferrable to create a separate 'variables.tf' for 
+this purpose</p>
+<p>Variables values can be assigned on the command-line:</p>
+<pre>terraform plan -var azure_region="UK South"</pre>
+<p>This becomes impractical if you want to override several default values. Instead you can 
+additional create a 'variable definitions' file. The variable definitions file should consist of only variable assignments:</p>
+<pre>
+azure_region = "West Europe"
+list_of_fruit = ["mango", "pineapple", "blueberry", "grape"]
+res_tags = {
+    location   = "UK South"
+    department = "Accounts"
+    owner      = "Freda Perry"
+}
+</pre>
+<p>Terraform will automatically load variable defintion files named either 'terraform.tfvars' or 
+files ending in '.auto.tfvars'. If you prefer to use JSON format for your variable definition files, 
+Terraform will also load any files named 'terraform.tfvars.json' or ending in 'auto.tfvars.json'.</p> 
+<pre>
+{
+  "azure_region" : "West Europe",
+  "list_of_fruit" : ["mango", "pineapple", "blueberry", "grape"],
+  "res_tags" : {
+    "location"   : "UK South",
+    "department" : "Accounts",
+    "owner"      : "Freda Perry"
+  }
+}
+</pre>
+
+<h2>String Variables</h2>
+<p>Values for string variables are assigned with double-quoted strings:</p>
+<pre>
+variable "azure_region" {
+  type        = string
+  default     = "UK West"
+  description = "The Azure region to deploy resources"
+}
+
+output "az_region" {
+  value = var.azure_region
+}
+</pre>
+
+<h2>List Variables</h2>
+<p>Lists are assigned as comma-separated lists inside square brackets:</p>
+<pre>
+variable "list_of_fruit" {
+  type    = list(string)
+  default = ["apple", "pear", "orange", "peach"]
+}
+
+output "first_fruit" {
+  value = var.list_of_fruit[0]
+}
+
+output "all_fruits" {
+  value = var.list_of_fruit
+}
+</pre>
+
+<h2>Map Variables</h2>
+<p>Map variables are collection types, and contain key-value pairs. The values should adhere to the 
+declared datatype. Each key should be unique, where the keys and values are of type string:</p>
+<pre>
+variable "res_tags" {
+  type       = map(string)
+  default = {
+    location   = "UK West"
+    department = "Finance"
+    owner      = "Fred Perry"
+  }
+}
+
+output "this_department" {
+  value = var.res_tags["department"]
+}
+</pre>
+
+<h2>Object Variables</h2>
+<p>Object variables are collection types, with key-value pairs where the values for each key can 
+be of different types:</p>
+<pre>
+variable "user_account" {
+  type = object({
+    logon    = string
+    email    = string
+    roles    = list(string)
+    projects = map(string)
+    enabled  = bool
+  })
+  default = {
+    logon = "fred001"
+    email = "fred@example.com"
+    roles = ["user", "report writer", "remote access", "acr pull"]
+    projects = {
+      primary = "solaris"
+      second  = "aix"
+      third   = "rhel"
+    }
+    enabled = true
+  }
+}
+
+output "user_details" {
+  value = var.user_account.logon
+}
+
+output "main_project" {
+  value = var.user_account.projects.primary
+}
+</pre>
+
+<h2>Set Variables</h2>
+<p>Sets are collections that can contain only unique values of the same datatype:</p>
+<pre>
+# Although the value "two" is included twice in the default assignment
+# the value "two" will only occur once in the actual set variable
+variable "myset" {
+  type    = set(string)
+  default = ["one", "two", "three", "four", "two"]
+}
+
+output "set_members" {
+  value = var.myset
+}
+</pre>
+<p>Elements of a set are identified only by their value and don't have any index or key to select
+with, so it is only possible to perform operations across all elements of the set</p>
+
+<h2>Tuple Variables</h2>
+<p>Tuples are similar to lists but each value in the list can of a different type:</p>
+<pre>
+variable "user_info" {
+  type    = tuple([string, bool, number])
+  default = ["Finance", true, 1]
+}
+
+output "tuple_values" {
+  value = var.user_info
+}
+
+output "user_enabled" {
+  value = var.user_info[1]
+}
+</pre>
