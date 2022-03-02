@@ -19,27 +19,67 @@ that be added to the Terraform core, allowing Terraform to interact with multipl
 executed in a working directory. The state file is a JSON representation of the remote
 infrastructure and is used by Terraform to plan and execute the changes to be made to the 
 infrastructure when Terraform commands are run.</p>
+
 <h1>Terraform Scripts</h1>
 <p>HCL scripts are used to declare the desired state using a series of code blocks. Each block has a type and serves a specific purpose:</p>
-<dl>
-  <dt>terraform</dt>
-  <dd>The terraform block is used to configure the terraform version, which providers will be used and the backend for the configuration</dd>
-  <dt>provider</dt>
-  <dd>Used to configure provider plugins</dd>
-  <dt>variable</dt>
-  <dd>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</dd>
-  <dt>resource</dt>
-  <dd>Used to represent a resource instance in the remote infrastructure that will be managed by terraform. The resource block defines the desired resource configuration</dd>
-  <dt>output</dt>
-  <dd>Used to get information about the infrastructure after deployment. The 'terraform output' 
-  command can also be used to retrieve the value of an output variable.</dd>
-  <dt>data</dt>
-  <dd>blank for now</dd>
-  <dt>module</dt>
-  <dd>blank for now</dd>
-  <dt>locals</dt>
-  <dd>blank for now</dd>
-</dl>
+
+<h2>terraform</h2>
+<p>The terraform block is used to configure the terraform version, which providers will be used and the backend for the configuration</p>
+<pre><code>
+terraform {
+  required_providers {
+    azurerm = {
+      version = "=2.86"
+      source = "hashicorp/azurerm"
+    }
+  }
+
+  backend azurerm {}
+}
+</code></pre>
+
+<h2>provider</h2>
+<p>Used to configure provider plugins:</p>
+<pre><code>
+provider "azurerm" {
+  features {}
+}
+</code></pre>
+
+<h2>variable</h2>
+<p>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</p>
+
+<h2>resource</h2>
+<p>Used to represent a resource instance in the remote infrastructure that will be managed by terraform. The resource block defines the desired resource configuration</p>
+
+<h2>output</h2>
+<p>Used to get information about the infrastructure after deployment. The 'terraform output' 
+command can also be used to retrieve the value of an output variable. The variable value can 
+be retrieved directly or as part of an expression:</p>
+<pre>
+variable "compass" {
+  type = string
+  default = "West"
+}
+
+output "direction" {
+  value = var.compass
+}
+
+output "region" {
+  value = "UK ${var.compass}"
+}
+</pre>
+
+<h2>data</h2>
+<p>blank for now</p>
+
+<h2>module</h2>
+<p>blank for now</p>
+
+<h2>locals</h2>
+<p>blank for now</p>
+
 <h1>Terraform Workflow</h1>
 <p>The general workflow for deploying infrastructure in Terraform is:</p>
 <ol>
@@ -55,7 +95,6 @@ hidden '.terraform' folder in the working directory.</p>
 <p>Terraform 'validate' can be used to validate the syntax of the scripts in the 
 working directory: there is also a 'fmt' command available to apply best 
 practice formatting to the scripts</p>
-<p>
 <p>The 'terraform plan' command is used to determine what changes will be 
 made when the scripts are applied. It compares the target infrastructure to the 
 current state file and then compares the declared configuration to the state 
