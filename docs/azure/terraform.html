@@ -124,7 +124,7 @@ this purpose</p>
 <p>Variables values can be assigned on the command-line:</p>
 <pre>terraform plan -var azure_region="UK South"</pre>
 <p>This becomes impractical if you want to override several default values. Instead you can 
-additional create a 'variable definitions' file. The variable definitions file should consist of only variable assignments:</p>
+additionally create a 'variable definitions' file. The variable definitions file should consist of only variable assignments:</p>
 <pre>
 azure_region = "West Europe"
 list_of_fruit = ["mango", "pineapple", "blueberry", "grape"]
@@ -148,6 +148,21 @@ Terraform will also load any files named 'terraform.tfvars.json' or ending in 'a
   }
 }
 </pre>
+<p>Variables can also assigned in environment variables by prefixing the variable name with "TF_VAR_":</p>
+<pre>
+export TF_VAR_LOCATION="UK South"
+</pre>
+<p>The corresponding variable "LOCATION" will need to be declared in your scripts to be accessible:</p>
+<pre>
+variable "LOCATION" {
+  default = ""
+}
+
+output "region" {
+  value = var.LOCATION
+}
+</pre>
+
 
 <h2>String Variables</h2>
 <p>Values for string variables are assigned with double-quoted strings:</p>
@@ -162,7 +177,6 @@ output "az_region" {
   value = var.azure_region
 }
 </pre>
-
 <h2>List Variables</h2>
 <p>Lists are assigned as comma-separated lists inside square brackets:</p>
 <pre>
