@@ -6,11 +6,15 @@ permalink: /azure/terraform
 
 <p>Useful notes on variables:</p>
 <ul>
-  <li><a href="https://upcloud.com/community/tutorials/terraform-variables/">Upcloud</a></li>
-  <li><a href="https://dev.to/pwd9000/terraform-complex-variable-types-173e">Dev Community</a></li>
+  <li><a href="https://upcloud.com/community/tutorials/terraform-variables/" target="#">Upcloud</a></li>
+  <li><a href="https://dev.to/pwd9000/terraform-complex-variable-types-173e" target="#">Dev Community</a></li>
 </ul>
 
-<h1>Terraform Architecture</h1>
+<h1>Contents</h1>
+* TOC
+{:toc}
+# Terraform Architecture 
+<a href="#markdown-toc">Top</a>
 <p>Terraform is a tool to consume upstream APIs. The Azure REST API exposes a client library that 
 encapsulates the request-response objects of the API. The Terraform Azure provider uses this 
 client library to connect and invoke remote API endpoints for Azure. Each provider is a plugin
@@ -20,10 +24,12 @@ executed in a working directory. The state file is a JSON representation of the 
 infrastructure and is used by Terraform to plan and execute the changes to be made to the 
 infrastructure when Terraform commands are run.</p>
 
-<h1>Terraform Scripts</h1>
+# Terraform Blocks 
+<a href="#markdown-toc">Top</a>
+
 <p>HCL scripts are used to declare the desired state using a series of code blocks. Each block has a type and serves a specific purpose:</p>
 
-<h2>terraform</h2>
+## terraform
 <p>The terraform block is used to configure the terraform version, which providers will be used and the backend for the configuration</p>
 <pre><code>
 terraform {
@@ -38,7 +44,7 @@ terraform {
 }
 </code></pre>
 
-<h2>provider</h2>
+## provider
 <p>Used to configure provider plugins:</p>
 <pre><code>
 provider "azurerm" {
@@ -46,13 +52,13 @@ provider "azurerm" {
 }
 </code></pre>
 
-<h2>variable</h2>
+## variable
 <p>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</p>
 
-<h2>resource</h2>
+## resource
 <p>Used to represent a resource instance in the remote infrastructure that will be managed by terraform. The resource block defines the desired resource configuration</p>
 
-<h2>output</h2>
+## output
 <p>Used to get information about the infrastructure after deployment. The 'terraform output' 
 command can also be used to retrieve the value of an output variable. The variable value can 
 be retrieved directly or as part of an expression:</p>
@@ -71,16 +77,18 @@ output "region" {
 }
 </pre>
 
-<h2>data</h2>
+## data
 <p>blank for now</p>
 
-<h2>module</h2>
+## module
 <p>blank for now</p>
 
-<h2>locals</h2>
+## locals
 <p>blank for now</p>
 
-<h1>Terraform Workflow</h1>
+# Terraform Workflow 
+<a href="#markdown-toc">Top</a>
+
 <p>The general workflow for deploying infrastructure in Terraform is:</p>
 <ol>
   <li>Initialise the working directory (terraform init)</li>
@@ -106,7 +114,9 @@ desired configuration as defined in the scripts to the target infrastructure.
 If the apply is successful, Terraform generates a state file which, by default, 
 is strored in the current working directory as 'terraform.tfstate'.</p>
 
-<h1>Terraform Variables</h1>
+# Terraform Variables 
+<a href="#markdown-toc">Top</a>
+
 <p>Terraform variable blocks allow an existing configuration to be tailored 
 using external input values. A variable block starts with the keyword 'variable' 
 followed by the variable name and a block of attributes associated to the variable.
@@ -164,7 +174,7 @@ output "region" {
 </pre>
 
 
-<h2>String Variables</h2>
+## String Variables
 <p>Values for string variables are assigned with double-quoted strings:</p>
 <pre>
 variable "azure_region" {
@@ -177,7 +187,7 @@ output "az_region" {
   value = var.azure_region
 }
 </pre>
-<h2>List Variables</h2>
+## List Variables
 <p>Lists are assigned as comma-separated lists inside square brackets:</p>
 <pre>
 variable "list_of_fruit" {
@@ -194,7 +204,7 @@ output "all_fruits" {
 }
 </pre>
 
-<h2>Map Variables</h2>
+## Map Variables
 <p>Map variables are collection types, and contain key-value pairs. The values should adhere to the 
 declared datatype. Each key should be unique, where the keys and values are of type string:</p>
 <pre>
@@ -212,7 +222,7 @@ output "this_department" {
 }
 </pre>
 
-<h2>Object Variables</h2>
+## Object Variables
 <p>Object variables are collection types, with key-value pairs where the values for each key can 
 be of different types:</p>
 <pre>
@@ -246,7 +256,7 @@ output "main_project" {
 }
 </pre>
 
-<h2>Set Variables</h2>
+## Set Variables
 <p>Sets are collections that can contain only unique values of the same datatype:</p>
 <pre>
 # Although the value "two" is included twice in the default assignment
@@ -263,7 +273,7 @@ output "set_members" {
 <p>Elements of a set are identified only by their value and don't have any index or key to select
 with, so it is only possible to perform operations across all elements of the set</p>
 
-<h2>Tuple Variables</h2>
+## Tuple Variables
 <p>Tuples are similar to lists but each value in the list can of a different type:</p>
 <pre>
 variable "user_info" {
@@ -279,3 +289,36 @@ output "user_enabled" {
   value = var.user_info[1]
 }
 </pre>
+
+# Remote State 
+<a href="#markdown-toc">Top</a>
+<p>Terraform documentation on <cite><a href="https://www.terraform.io/language/settings/backends/azurerm">Terraform Backend</a></cite></p>
+<p>Microsoft documentation on <cite><a href="https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli" target="#">Remote State Storage</a></cite> for terraform</p>
+<p>Storing Terraform state remotely allows multiple developers to work on the same
+environment from different machines. Terraform state can be stored in Azure and then
+referenced in the backend configuration of your Terraform scripts. Public access is allowed
+to Azure storage to store Terraform state. To use remote
+state in Azure Storage, configure the backend block of your terraform block with:</p>
+<ul>
+  <li>resource_group_name</li>
+  <li>storage_account_name</li>
+  <li>container_name</li>
+  <li>key - the name of the state store file to be created</li>
+</ul>
+<pre><code>
+terraform {
+  required_version = "~>v1.1.5"
+  required_providers {
+    azurerm = {
+      version = "~>2.36"
+      source  = "hashicorp/azurerm"
+    }
+  }
+  backend "azurerm" {
+    resource_group_name  = "rg-remotestate"
+    storage_account_name = "stgremotestate"
+    container_name       = "statefiles"
+    key                  = "project1.terraform.tfstate"
+  }
+}
+</code></pre>

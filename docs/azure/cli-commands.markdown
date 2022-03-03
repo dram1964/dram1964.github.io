@@ -10,8 +10,11 @@ containerfile: "&lt;<i>container/path/filename.csv</i>&gt;"
 containerfolder: "&lt;<i>container/path</i>&gt;"
 ---
 
-<h1>JMES Query Syntax for AZ CLI commands</h1>
-<cite><a href="https://techcommunity.microsoft.com/t5/itops-talk-blog/how-to-query-azure-resources-using-the-azure-cli/ba-p/360147">How to query Azure resources using the Azure CLI</a></cite>
+<h1>Contents</h1>
+* TOC
+{:toc}
+# JMES Query Syntax for AZ CLI commands
+<cite><a href="https://techcommunity.microsoft.com/t5/itops-talk-blog/how-to-query-azure-resources-using-the-azure-cli/ba-p/360147" target="#">How to query Azure resources using the Azure CLI</a></cite>
 <p>By default, az cli queries return JSON output. You can change the output format
 using the --output switch. Typical values are either 'table' or 'tsv'. </p>
 <p>The query option can be used to filter the fields returned. Where a command 
@@ -58,7 +61,7 @@ az account set --subscription $SUB
 az account set --subscription $(az account list --query "[?contains(name, 'research')].[id]" -o tsv)
 </pre>
 
-<h1>Storage</h1>
+# Storage
 <p>Add a container to your Storage Account</p>
 <pre>
 az storage container create --name {{ page.containername }} --account-name {{ page.stgname }}
