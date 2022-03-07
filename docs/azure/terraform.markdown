@@ -95,6 +95,7 @@ output "region" {
   <li>Validate the scripts (terraform validate)</li>
   <li>Run the plan (terraform plan)</li>
   <li>Deploy the infrastructure (terraform apply)</li>
+  <li>Destroy the infrastructure (terraform destroy</li>
 </ol>
 <p>Terraform 'init' is executed in the directory containing the Terraform scripts 
 and will initialise the state file and download required providers and modules 
@@ -113,6 +114,12 @@ a plan</p>
 desired configuration as defined in the scripts to the target infrastructure. 
 If the apply is successful, Terraform generates a state file which, by default, 
 is strored in the current working directory as 'terraform.tfstate'.</p>
+<p>The 'terraform destroy' command can be used to remove resources from 
+environment and also from the state file. The '-target' option will allow 
+you to specify a specific resource to remove:</p>
+<pre>
+terraform destroy -target azurerm_vm.user_vm[1]
+</pre>
 
 # Terraform Variables 
 <a href="#markdown-toc">Top</a>
@@ -322,3 +329,48 @@ terraform {
   }
 }
 </code></pre>
+
+# Terraform Meta-Elements
+<a href="#markdown-toc">Top</a>
+<h2>Count</h2>
+<p>The 'count' attribute can be added to any resource and the value of this 
+attribute determines the number of resource instances to be deployed. The 
+'count' attribute provides and 'index' property which can be use with 
+variable interpolation to assign unique names to each resource created. The 
+index begins at 0.</p>
+<pre><code>
+resource "azurerm_vm" "user_vm" {
+  count = 3
+  name = "${var.vm_name}_0${count.index}"
+...
+...
+}
+
+output vm_ids {
+  value = azurerm_vm.user_vm[*].id
+}
+</code></pre>
+<p>Terraform stores the list of resources created as an array in the terraform
+state and the splatting operator '*' can be used to refer to this array as a 
+whole.</p>
+<p>The 'count' meta-element can also be used with a list variable, allowing more 
+tailored names to be given to the resources created:</p>
+<pre><code>
+variable "vm_names" {
+  type = list(string)
+  default = ["vm_harry", "vm_larry", "vm_barry"]
+}
+
+resource "azurerm_vm" "user_vm" {
+  count = length(var.vm_names)
+  name = "${var.vm_names[count.index]}"
+...
+...
+}
+
+output vm_ids {
+  value = azurerm_vm.user_vm[*].id
+}
+</code></pre>
+
+
