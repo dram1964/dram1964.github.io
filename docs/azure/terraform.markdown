@@ -118,7 +118,7 @@ is strored in the current working directory as 'terraform.tfstate'.</p>
 environment and also from the state file. The '-target' option will allow 
 you to specify a specific resource to remove:</p>
 <pre>
-terraform destroy -target azurerm_vm.user_vm[1]
+terraform destroy -target azurerm_virtual_machine.user_vm[1]
 </pre>
 
 # Terraform Variables 
@@ -339,7 +339,7 @@ attribute determines the number of resource instances to be deployed. The
 variable interpolation to assign unique names to each resource created. The 
 index begins at 0.</p>
 <pre><code>
-resource "azurerm_vm" "user_vm" {
+resource "azurerm_virtual_machine" "user_vm" {
   count = 3
   name = "${var.vm_name}_0${count.index}"
 ...
@@ -347,7 +347,7 @@ resource "azurerm_vm" "user_vm" {
 }
 
 output vm_ids {
-  value = azurerm_vm.user_vm[*].id
+  value = azurerm_virtual_machine.user_vm[*].id
 }
 </code></pre>
 <p>Terraform stores the list of resources created as an array in the terraform
@@ -361,7 +361,7 @@ variable "vm_names" {
   default = ["vm_harry", "vm_larry", "vm_barry"]
 }
 
-resource "azurerm_vm" "user_vm" {
+resource "azurerm_virtual_machine" "user_vm" {
   count = length(var.vm_names)
   name = "${var.vm_names[count.index]}"
 ...
@@ -369,8 +369,53 @@ resource "azurerm_vm" "user_vm" {
 }
 
 output vm_ids {
-  value = azurerm_vm.user_vm[*].id
+  value = azurerm_virtual_machine.user_vm[*].id
 }
 </code></pre>
 
+<h2>For Each</h2>
+<p>The 'for_each' meta element can be used to iterate a map or set 
+to provision multiple resources from a single 
+resource block. 'for_each' provides a 'each.key' and an 'each.value' attribute
+to further tailor the properties of the resources created:</p>
+<pre><code>
+variable "user_machines" = {
+  type = map(string)
+  default = {
+    "vm_harry" : "rg-env-dev",
+    "vm_larry" : "rg-env-live",
+    "vm_barry" : "rg-env-test"
+  }
+}
 
+resource azurerm_virtual_machine "user_vm" {
+  for_each = var.user_machines
+  name = each.key
+  resource_group_name = each.value
+...
+...
+}
+</code></pre>
+
+<h2>Ternary Operator</h2>
+<p>Terraform provides the traditional ternary operator '?:' to implement
+conditional logic within blocks:</p>
+<pre><code>
+variable "user_machines" = {
+  type = map(string)
+  default = {
+    "vm_harry" : "rg-env-dev",
+    "vm_larry" : "rg-env-live",
+    "vm_barry" : "rg-env-test"
+  }
+}
+
+resource azurerm_virtual_machine "user_vm" {
+  for_each = var.user_machines
+  name = each.key
+  resource_group_name = each.value
+  vm_size = each.key == "vm_larry" ? "Standard_DS1_v2" : "Standard_FS1_v2"
+...
+...
+}
+</code></pre>
