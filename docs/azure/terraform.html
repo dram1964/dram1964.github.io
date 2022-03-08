@@ -4,6 +4,8 @@ title: "Azure Terraform Notes"
 permalink: /azure/terraform
 ---
 
+<p>Terraform Language <a href="https://www.terraform.io/language" target="#">Documentation</a></p>
+
 <p>Useful notes on variables:</p>
 <ul>
   <li><a href="https://upcloud.com/community/tutorials/terraform-variables/" target="#">Upcloud</a></li>
@@ -19,6 +21,7 @@ permalink: /azure/terraform
   <li><a href="#section4">Terraform Variables</a></li>
   <li><a href="#section5">Remote State</a></li>
   <li><a href="#section6">Terraform Meta-Arguments</a></li>
+  <li><a href="#section7">Terraform Functions</a></li>
 </ul>
 </div>
 
@@ -456,6 +459,8 @@ a provider attribute to a resource to tell it to use the non-default provider</p
 <p>The 'lifecycle' meta-argument can be used to change terraform's default 
 behaviour when creating, updating or destroying resources</p>
 
+<h1 id="section7">Terraform Functions</h1> <a href="#toc">Top</a>
+<p>See <a href="https://www.terraform.io/language/functions" target="#">Terraform Functions</a>
 <h2>Ternary Operator</h2>
 <p>Terraform provides the traditional ternary operator '?:' to implement
 conditional logic within blocks:</p>
@@ -477,4 +482,28 @@ resource azurerm_virtual_machine "user_vm" {
 ...
 ...
 }
+</code></pre>
+
+<h2>Merge</h2>
+<p>The merge operator can be used to join two lists together:</p>
+<pre><code>
+locals = {
+  default_tags = {
+    "cost center" : "Central 234",
+    "created_by" : "terraform"
+  }
+}
+
+resource "azurerm_virtual_machine" "virtual_machine" {
+...
+  tags = merge(local.default_tags, var.custom_tags)
+...
+}
+</code></pre>
+
+<h2>Lookup</h2>
+<p>The lookup operator can be used to retrieve a single value from a map using its
+key:</p>
+<pre><code>
+lookup(map, key, default)
 </code></pre>
