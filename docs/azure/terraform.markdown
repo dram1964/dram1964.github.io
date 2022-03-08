@@ -330,7 +330,7 @@ terraform {
 }
 </code></pre>
 
-# Terraform Meta-Elements
+# Terraform Meta-Arguments
 <a href="#markdown-toc">Top</a>
 <h2>Count</h2>
 <p>The 'count' attribute can be added to any resource and the value of this 
@@ -341,7 +341,7 @@ index begins at 0.</p>
 <pre><code>
 resource "azurerm_virtual_machine" "user_vm" {
   count = 3
-  name = "${var.vm_name}_0${count.index}"
+  name = "${var.vm_name}-0${count.index}"
 ...
 ...
 }
@@ -396,6 +396,62 @@ resource azurerm_virtual_machine "user_vm" {
 ...
 }
 </code></pre>
+<p>The 'for_each' meta-element can also be used to iterate at the property level: instead of using for_each to define multiple instance of the same resource type, for_each can be used to define multiple instances of a property on a singe resource:</p>
+<pre><code>
+resource "azurerm_app_service" "app_service" {
+  name = var.app_service_name
+  location = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  app_service_plan_id = azurerm_app_service_plan.app_service_plan.id
+
+  dynamic "connection_string" {
+    for_each = var.connection_strings
+      content {
+        name = connection_string.name
+        type = connection_string.type
+        value = connection_string.value
+      }
+    }
+
+   https_only = true
+}
+</code></pre>
+<p>Property iterations use the keyword 'dynamic' along with the name of the 
+property being iterated</p>
+
+<h2>Depends On</h2>
+<p>Terraform can identify resource dependancies automatically, and will create
+resources with no dependancies in parallel, whilst resources with dependancies
+are created sequentially. But where a resource depends on another resources 
+behaviour rather than it's data, we have to explicitly declare the dependancy. A 
+data dependancy is clear to see: where the value for an attribute is declared by
+reference to the value of an attribute of another resource. For example:</p>
+<pre><code>
+resource azurerm_virtual_machine "my_database_server" {
+...
+  resource_group_name = azurerm_resource_group.resource_group.name
+...
+}
+</code></pre>
+<p>Implicit dependancies must be declared as a list of references to other 
+resources:</p>
+<pre><code>
+resource_azurerm_virtual_machine "my_app_server" {
+...
+  depends_on = [
+      azurerm_virtual_machine.db_server.id,
+      azurerm_virtual_machine.app_server.id
+  ]
+}
+</code></pre>
+
+<h2>Provider</h2>
+<p>Where multiple providers are being used in Terraform scripts, you can add
+a provider attribute to a resource to tell it to use the non-default provider</p>
+
+<h2>Lifecycle</h2>
+<p>The 'lifecycle' meta-argument can be used to change terraform's default 
+behaviour when creating, updating or destroying resources</p>
 
 <h2>Ternary Operator</h2>
 <p>Terraform provides the traditional ternary operator '?:' to implement
