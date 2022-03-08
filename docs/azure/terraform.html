@@ -461,6 +461,8 @@ behaviour when creating, updating or destroying resources</p>
 
 <h1 id="section7">Terraform Functions</h1> <a href="#toc">Top</a>
 <p>See <a href="https://www.terraform.io/language/functions" target="#">Terraform Functions</a>
+<p>You can use the Terraform console to test out the various built-in functions 
+of the Terraform language</p>
 <h2>Ternary Operator</h2>
 <p>Terraform provides the traditional ternary operator '?:' to implement
 conditional logic within blocks:</p>
@@ -485,7 +487,7 @@ resource azurerm_virtual_machine "user_vm" {
 </code></pre>
 
 <h2>Merge</h2>
-<p>The merge operator can be used to join two lists together:</p>
+<p>The merge operator can be used to join two or more maps together:</p>
 <pre><code>
 locals = {
   default_tags = {
@@ -500,6 +502,8 @@ resource "azurerm_virtual_machine" "virtual_machine" {
 ...
 }
 </code></pre>
+<p>If the same key is defined in more than one map, the value from the right-most 
+map is retained</p>
 
 <h2>Lookup</h2>
 <p>The lookup operator can be used to retrieve a single value from a map using its
