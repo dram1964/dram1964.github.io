@@ -10,11 +10,19 @@ permalink: /azure/terraform
   <li><a href="https://dev.to/pwd9000/terraform-complex-variable-types-173e" target="#">Dev Community</a></li>
 </ul>
 
-<h1>Contents</h1>
-* TOC
-{:toc}
-# Terraform Architecture 
-<a href="#markdown-toc">Top</a>
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">Terraform Architecture</a></li>
+  <li><a href="#section2">Terraform Blocks</a></li>
+  <li><a href="#section3">Terraform Workflow</a></li>
+  <li><a href="#section4">Terraform Variables</a></li>
+  <li><a href="#section5">Remote State</a></li>
+  <li><a href="#section6">Terraform Meta-Arguments</a></li>
+</ul>
+</div>
+
+<h1 id="section1">Terraform Architecture</h1> <a href="#toc">Top</a>
 <p>Terraform is a tool to consume upstream APIs. The Azure REST API exposes a client library that 
 encapsulates the request-response objects of the API. The Terraform Azure provider uses this 
 client library to connect and invoke remote API endpoints for Azure. Each provider is a plugin
@@ -24,12 +32,11 @@ executed in a working directory. The state file is a JSON representation of the 
 infrastructure and is used by Terraform to plan and execute the changes to be made to the 
 infrastructure when Terraform commands are run.</p>
 
-# Terraform Blocks 
-<a href="#markdown-toc">Top</a>
+<h1 id="section2">Terraform Blocks</h1> <a href="#toc">Top</a>
 
 <p>HCL scripts are used to declare the desired state using a series of code blocks. Each block has a type and serves a specific purpose:</p>
 
-## terraform
+<h2>terraform</h2>
 <p>The terraform block is used to configure the terraform version, which providers will be used and the backend for the configuration</p>
 <pre><code>
 terraform {
@@ -44,7 +51,7 @@ terraform {
 }
 </code></pre>
 
-## provider
+<h2>provider</h2>
 <p>Used to configure provider plugins:</p>
 <pre><code>
 provider "azurerm" {
@@ -52,13 +59,13 @@ provider "azurerm" {
 }
 </code></pre>
 
-## variable
+<h2>variable</h2>
 <p>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</p>
 
-## resource
+<h2>resource</h2>
 <p>Used to represent a resource instance in the remote infrastructure that will be managed by terraform. The resource block defines the desired resource configuration</p>
 
-## output
+<h2>output</h2>
 <p>Used to get information about the infrastructure after deployment. The 'terraform output' 
 command can also be used to retrieve the value of an output variable. The variable value can 
 be retrieved directly or as part of an expression:</p>
@@ -77,17 +84,16 @@ output "region" {
 }
 </pre>
 
-## data
+<h2>data</h2>
 <p>blank for now</p>
 
-## module
+<h2>module</h2>
 <p>blank for now</p>
 
-## locals
+<h2>locals</h2>
 <p>blank for now</p>
 
-# Terraform Workflow 
-<a href="#markdown-toc">Top</a>
+<h1 id="section3">Terraform Workflow</h1> <a href="#toc">Top</a>
 
 <p>The general workflow for deploying infrastructure in Terraform is:</p>
 <ol>
@@ -121,8 +127,7 @@ you to specify a specific resource to remove:</p>
 terraform destroy -target azurerm_virtual_machine.user_vm[1]
 </pre>
 
-# Terraform Variables 
-<a href="#markdown-toc">Top</a>
+<h1 id="section4">Terraform Variables</h1> <a href="#toc">Top</a>
 
 <p>Terraform variable blocks allow an existing configuration to be tailored 
 using external input values. A variable block starts with the keyword 'variable' 
@@ -181,7 +186,7 @@ output "region" {
 </pre>
 
 
-## String Variables
+<h2>String Variables</h2>
 <p>Values for string variables are assigned with double-quoted strings:</p>
 <pre>
 variable "azure_region" {
@@ -194,7 +199,7 @@ output "az_region" {
   value = var.azure_region
 }
 </pre>
-## List Variables
+<h2>List Variables</h2>
 <p>Lists are assigned as comma-separated lists inside square brackets:</p>
 <pre>
 variable "list_of_fruit" {
@@ -211,7 +216,7 @@ output "all_fruits" {
 }
 </pre>
 
-## Map Variables
+<h2>Map Variables</h2>
 <p>Map variables are collection types, and contain key-value pairs. The values should adhere to the 
 declared datatype. Each key should be unique, where the keys and values are of type string:</p>
 <pre>
@@ -229,7 +234,7 @@ output "this_department" {
 }
 </pre>
 
-## Object Variables
+<h2>Object Variables</h2>
 <p>Object variables are collection types, with key-value pairs where the values for each key can 
 be of different types:</p>
 <pre>
@@ -263,7 +268,7 @@ output "main_project" {
 }
 </pre>
 
-## Set Variables
+<h2>Set Variables</h2>
 <p>Sets are collections that can contain only unique values of the same datatype:</p>
 <pre>
 # Although the value "two" is included twice in the default assignment
@@ -280,7 +285,7 @@ output "set_members" {
 <p>Elements of a set are identified only by their value and don't have any index or key to select
 with, so it is only possible to perform operations across all elements of the set</p>
 
-## Tuple Variables
+<h2>Tuple Variables</h2>
 <p>Tuples are similar to lists but each value in the list can of a different type:</p>
 <pre>
 variable "user_info" {
@@ -297,8 +302,7 @@ output "user_enabled" {
 }
 </pre>
 
-# Remote State 
-<a href="#markdown-toc">Top</a>
+<h1 id="section5">Remote State </h1> <a href="#toc">Top</a>
 <p>Terraform documentation on <cite><a href="https://www.terraform.io/language/settings/backends/azurerm">Terraform Backend</a></cite></p>
 <p>Microsoft documentation on <cite><a href="https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli" target="#">Remote State Storage</a></cite> for terraform</p>
 <p>Storing Terraform state remotely allows multiple developers to work on the same
@@ -330,8 +334,7 @@ terraform {
 }
 </code></pre>
 
-# Terraform Meta-Arguments
-<a href="#markdown-toc">Top</a>
+<h1 id="section6">Terraform Meta-Arguments</h1> <a href="#toc">Top</a>
 <h2>Count</h2>
 <p>The 'count' attribute can be added to any resource and the value of this 
 attribute determines the number of resource instances to be deployed. The 
