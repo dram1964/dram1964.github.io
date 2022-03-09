@@ -22,6 +22,7 @@ permalink: /azure/terraform
   <li><a href="#section5">Remote State</a></li>
   <li><a href="#section6">Terraform Meta-Arguments</a></li>
   <li><a href="#section7">Terraform Functions</a></li>
+  <li><a href="#section8">Provisioners</a></li>
 </ul>
 </div>
 
@@ -548,3 +549,60 @@ another collection:</p>
 { for name, location in var.vm_map: lower(name) => lower(location) }
 [ for name, location in var.vm_map: "${name}-${location}" ]
 </pre></code>
+
+<h1 id="section8">Provisioners</h1> <a href="#toc">Top</a>
+<p>Terraform allows 'provisioner' blocks to be added to a resources attributes 
+to enable execution of custom scripts or to copy files to the resource. There
+are three built-in provisioner types:</p>
+<ul>
+  <li>local-exec - used to execute scripts from the local machine</li>
+  <li>file - used to copy files to the deployed resource</li>
+  <li>remote-exec - used to execute scripts on the remote resource</li>
+</ul>
+<p>The 'local-exec' scripts has one mandatory attribute (command) and three
+optional attributes (working_dir, interpreter, environment, and when). 
+Terraform also provides a 'null_resource' that can be used to execute a 
+local script without associating the script execution to a specific resource:</p>
+<pre><code>
+resource "azurerm_resource_group" "resource_group" {
+  name = var.resource_group_name
+  location = var.location
+
+  provisioner "local-exec" {
+    command = "echo ${azurerm_resource_group.resource_group.id}"
+  }
+}
+
+resource "null_resource" "my_web_app" {
+  provisioner "local-exec" {
+    command = "catalyst.pl"
+    working_dir = "./bin"
+    interpreter = ["perl", "-wc"]
+    environment = {
+      DEBUG = 1
+      PORT = 8080
+    }
+  }
+}
+</code></pre>
+<p>The local-exec provisioner also provides a 'when' attribute. If the value is
+set to 'destroy' the command is only executed when 'terraform destroy' is 
+called.</p>
+<p>The 'file' provisioner is used to copy folders and files to the target 
+resource:</p>
+<pre><code>
+provisioner "file" {
+  source = "./resources/*.xml"
+  destination = "/app/resources/"
+}
+</code></pre>
+<p>The 'remote-exec' provisioner is used to execute scripts and commands on 
+remote resources</p>
+<pre><code>
+provisioner "remote-exec" {
+  inline = [
+    "apt-get update",
+    "apt-get install -y postgres"
+  ]
+}
+</code></pre>
