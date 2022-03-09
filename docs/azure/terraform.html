@@ -202,6 +202,35 @@ output "az_region" {
   value = var.azure_region
 }
 </pre>
+<p>Terraform supports string interpolation to allow the generation of strings by
+combining variable values and string values. String interpolation expressions 
+are declared within a double-quoted string and references to variable values 
+or other resources are enclosed within '${}':</p>
+<pre><code>
+name = "vm-${var.user_name}"
+</code></pre>
+<p>Terraform also supports 'String Directives' which allow the generation of 
+strings using loops or conditional statements. String directives are declared
+within double-quoted strings and the control statements are enclosed within 
+'%{}':</p>
+<pre><code>
+output "users_created" {
+  value = "%{ for val in var.user_names }${val} %{ endfor }"
+}
+</code></pre>
+<p>Note that the string directive will output everything between the '%{}' blocks:
+so that the space after '${val}' is also part of the output in the above example</p>
+<p>String directives also support 'if' statements and HEREDOCS:</p>
+<pre><code>
+enable_public_ip = << EOT
+%{ if var.location == "UK South" }
+true
+%{ else }
+false
+%{ endif }
+EOT
+</code></pre>
+
 <h2>List Variables</h2>
 <p>Lists are assigned as comma-separated lists inside square brackets:</p>
 <pre>
@@ -511,3 +540,11 @@ key:</p>
 <pre><code>
 lookup(map, key, default)
 </code></pre>
+
+<h2>For</h2>
+<p>'For' expressions can be used to iterate over any collection type to output 
+another collection:</p>
+<pre><code>
+{ for name, location in var.vm_map: lower(name) => lower(location) }
+[ for name, location in var.vm_map: "${name}-${location}" ]
+</pre></code>
