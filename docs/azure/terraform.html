@@ -765,8 +765,54 @@ output "resource_group_location" {
 variables.tf, outputs.tf and the testing.auto.tfvars file in place we can test
 our module using the usual terraform workflow:</p>
 <pre><code>
+terraform init
 terraform validate
 terraform plan
 terraform apply 
 terraform destroy
 </pre></code>
+<p>If we later alter the scripts in the module, then we'd have to re-run terraform
+init to pick up the changes.</p>
+
+<h2>Module Versioning</h2>
+<p>When using the module in a configuration, the source for our modules can be 
+set to reference a github repository:</p>
+<pre></code>
+module "resource_group" {
+  source = "github.com/&lt;owner&gt;/&lt;repo_name&gt;.git//modules/resources/groups"
+  resource_group_name = var.resource_group_name
+  resource_group_tags = var.resource_group_tags
+}
+</code></pre>
+<p>Note that the double forward-slash is required to specify the path to the 
+module within the repository.</p>
+<p>If your modules are stored in a private repo, then it is easier to use ssh 
+instead of https to access the repo:</p>
+<pre></code>
+module "resource_group" {
+  source = "git::git@github.com/&lt;owner&gt;/&lt;repo_name&gt;.git//modules/resources/groups"
+  resource_group_name = var.resource_group_name
+  resource_group_tags = var.resource_group_tags
+}
+</code></pre>
+<p>You can tag the commits to simplify the process of using different versions 
+of the module in your different environments:</p>
+<pre><code>
+git tag -a "v0.0.1" -m "First release of the groups module"
+git push --follow-tags
+# make some changes to the module...
+git add .
+git commit -m "Made some experimental changes to groups module"
+git push origin master
+# now add a tag for the new version
+git tag -a "v0.0.2" -m "Second release of the groups module"
+git push --follow-tags
+</code></pre>
+<p>Now in your different environments you can reference the module version by using the tag. For v0.0.1, use:</p>
+<pre><code>
+source = "git::git@github.com:/&lt;owner&gt;/&lt;repo_name&gt;//modules/resources/groups?ref=v0.0.1"
+</code></pre>
+<p>For v0.0.2, use:</p>
+<pre></code>
+source = "git::git@github.com:/&lt;owner&gt;/&lt;repo_name&gt;//modules/resources/groups?ref=v0.0.2"
+</code></pre>
