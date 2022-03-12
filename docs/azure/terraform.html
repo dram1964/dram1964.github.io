@@ -63,6 +63,14 @@ provider "azurerm" {
   features {}
 }
 </code></pre>
+<p>Sensitive values should be supplied as environment variables. The azurerm 
+provider will automatically use the following environment variables, if set:</p>
+<ol>
+  <li>ARM_SUBSCRIPTION_ID</li>
+  <li>ARM_CLIENT_ID</li>
+  <li>ARM_CLIENT_SECRET</li>
+  <li>ARM_TENANT_ID</li>
+</ol>
 
 <h2>variable</h2>
 <p>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</p>
@@ -90,7 +98,37 @@ output "region" {
 </pre>
 
 <h2>data</h2>
-<p>blank for now</p>
+<p>A data block can be used to read information from existing resources. For 
+example, to retrieve secrets from a keyvault, the following data blocks can 
+be used:</p>
+<pre>
+data "azurerm_key_value" "projectkv" {
+  name = var.keyvault_name
+  resource_group_name = var.keyvault_rg
+}
+
+data "azurerm_key_vault_secret" "admin_user" {
+  name = var.administrator_login
+  key_vault_id = data.azurerm_key_vault.projectkv.id
+}
+
+data "azurerm_key_vault_secret" "admin_password" {
+  name = var.administrator_password
+  key_vault_id = data.azurerm_key_vault.projectkv.id
+}
+
+resource "azurerm_virtual_machine" "virtual_machine" {
+  count = 3
+  ...
+  os_profile {
+    computer_name = ${var.machine_name}-${count.index}
+    admin_username = data.azurerm_key_vault_secret.admin_user.value
+    admin_password = data.azurerm_key_vault_secret.admin_password.value
+  }
+  ...
+}
+</code></pre>
+
 
 <h2>module</h2>
 <p>blank for now</p>
