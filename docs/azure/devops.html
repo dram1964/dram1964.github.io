@@ -33,7 +33,10 @@ features. DevOps teams consist of both developers and operations staff working
 together on a common goal or product, to deliver new features to production 
 in a fast and reliable manner. 
 This closely aligns with Agile metholdology where the focus is on reducing the 
-time to delivery of new business value.</p>
+time to delivery of new business value. The introduction of DevOps is often 
+associated with the adoption of Agile.</p>
+<p>When adopting DevOps teams will attempt to standarise on a common set of tools
+and standards for source control, development and architecture deployment.</p> 
 
 <h2>Key Metrics for Devops</h2><a href="#toc">Top</a>
 
@@ -58,20 +61,20 @@ time to delivery of new business value.</p>
 <h1 id="section2">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <p>The seven practices of DevOps are:</p>
 <dl>
-  <dt>Configuration Management</dt>
-  <dd></dd>
+  <dt>Configuration Management or Configuration As Code</dt>
+  <dd>Configuration for the applcation and its components is stored as JSON/YAML in a version control repository and serves as input for deployment tools. Configuration describes the desired state of the application and should be applied regularly to ensure that there is no configuration drift. Re-applying configuration will revoke manual changes made outside of configuration management.</dd>
   <dt>Release Managment</dt>
-  <dd></dd>
+  <dd>Release management is about controlling which versions of the software is deployed to which environments. Versions of the software and its configuration are stored as immutable artifacts in a repository and release management tools are used to manage the deployment of versions.</dd>
   <dt>Continuous Integration</dt>
-  <dd></dd>
+  <dd>Continuouse integration requires each developer to integrate their work with that of every other developer at least once a day. A continuous integration build ensures that it compiles and passes unit tests. Frequent integrations ensures that changes are minor and less likely to result in problems. When problems arise they should be easier to fix.</dd>
   <dt>Continuous Deployment</dt>
-  <dd></dd>
+  <dd>Continuous deployment is the automated deployment of each new version to prodution as long as it passes quality tests. The automated deployment pipeline involves deploying each version through a hierarchy of stages where it must pass the tests for that stage before proceeding to deployment to the next stage. If a release fails at any stage it is completely revoked. This ensures that any fixes to a broken release pass through all stages of testing before hitting production.</dd>
   <dt>Infrastructure As Code</dt>
-  <dd></dd>
+  <dd>Infrastructure to run the application is also stored in a source control repository. Infrastructure code describes the desired state and should be idempotent: no matter how many times you deploy it, the result should be the same. To avoid configuration drift, the desired state for infrastructure should be applied regularly to each environment using continuous deployment pipelines and is often done before new software versions are released to the environments.</dd>
   <dt>Test Automation</dt>
-  <dd></dd>
+  <dd>Continuous deployment involves frequent releases and therefore manual testing becomes impractical. Each deployment stage will require different types of tests that are triggered automatically when the release hits that stage. Manual testing should be reduced to the bare minimum, and should occur only at the final stages before deployment to production.</dd>
   <dt>Application Performance Monitoring</dt>
-  <dd></dd>
+  <dd>Involves monitoring performance and usage of the software in production, to gather intelligence about the value of the features in each release.</dd>
 </dl>
 
 
@@ -79,19 +82,19 @@ time to delivery of new business value.</p>
 <p>The seven habits of DevOps are:</p>
 <dl>
   <dt>Team Autonomy and Enterprise Alignment</dt>
-  <dd></dd>
+  <dd>Each team should be working autonomously towards their current goal, however controls will need to be in place to ensure teams stay aligned to organisational goals.</dd>
   <dt>Rigourous Management of Technical Debt</dt>
-  <dd></dd>
+  <dd>Technical debt is the cost associated with delay in addressing issues that affect the development pipelines. Fixing bugs and architectural issues should be prioritised and kept to a minimum.</dd>
   <dt>Focus on Flow of Customer Value</dt>
-  <dd></dd>
+  <dd>Teams should be focussed on the delivery of features that are used by the customer.</dd>
   <dt>Hypothesis-driven Development</dt>
-  <dd></dd>
+  <dd>Minimal implementations are released to production to determine whether they deliver actual value to the product based on usage patterns. If the hypothesis proves popular, the feature should be completed.</dd>
   <dt>Evidence Gathered In Production</dt>
-  <dd></dd>
+  <dd>Performance measurements should be gathered from the production environment and compared to previous measurements.</dd>
   <dt>Live-Site Culture</dt>
-  <dd></dd>
+  <dd>The production environment is prioritised above all others: issues or changes affecting production or release to production are tackled before all other tasks.</dd>
   <dt>Manage Infrastructure as a Flexible Resource</dt>
-  <dd></dd>
+  <dd>Infrastructure is deployed when needed and discarded when no longer needed.</dd>
 </dl>
 
 <h1 id="section4">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
