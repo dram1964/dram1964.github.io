@@ -10,7 +10,7 @@ permalink: /azure/devops
   <li><a href="#section1">DevOps Defined</a></li>
   <li><a href="#section2">Seven Practices of DevOps</a></li>
   <li><a href="#section3">Seven Habits of DevOps</a></li>
-  <li><a href="#section4">Terraform Variables</a></li>
+  <li><a href="#section4">Source Control</li>
   <li><a href="#section5">Remote State</a></li>
   <li><a href="#section6">Terraform Meta-Arguments</a></li>
   <li><a href="#section7">Terraform Functions</a></li>
@@ -100,7 +100,43 @@ on-demand through a published API.</p>
   <dd>Infrastructure is deployed when needed and discarded when no longer needed.</dd>
 </dl>
 
-<h1 id="section4">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
+<h1 id="section4">Source Control</h1><a href="#toc">Top</a>
+<p>Source control can either be centralised or decentralised. In a centralised
+system, all changes and branches are stored in a single location. Developers only
+receive the latest version of the code when they checkout the repository. To view
+history or other branches, they have to access the central server. Centralised
+source control reduces the amount of storage that is required locally and can 
+allow for better access control on branches, directories and files.</p>
+<p>In a decentralised source control repository, each developer takes a full copy 
+of the repository by cloning a local copy. This means each developer can view the
+full history of changes on their local copy without being connected to the central
+server.</p>
+<p>Azure DevOps supports Git as a decentralised source control system. Git is 
+optimised for working with text files. If your project also needs to track 
+images or binary files then you will need to use Git LFS (Large File Storage).</p>
+
+<h2>Branching Strategies</h2>
+<p>There are three popular branching strategies:</p>
+<dl>
+  <dt>GitHub Flow</dt>
+  <dd>In GitHub Flow there is one master branch that is always in a deployable state. New features are started in a branch and are not merged back to the master until complete.</dd>
+  <dt>GitFlow</dt>
+  <dd>GitFlow involves creating a branch of the master called Develop whenever you start work on a new version. From Develop, new branches are created for each new feature being developed. When the new feature is complete it is merged back into Develop. When you want to release a new version of the application, you create a release branch of the develop branch. Once testing and bug fixes are applied to the release branch, this branch is then merged into master branch and tagged with the version number. Changes from testing the release are also merged back to the Develop branch for the next round of development. Urgent bug fixes are carried out on a new branch from the master, and are merged back to both the master and Develop branches when ready.</dd>
+  <dt>Release Flow</dt>
+  <dd>Involves working with short-lived topic branches just as with GitFlow. However, the master branch is never released to production. Instead when a new version is
+ to be deployed, a new branch of the master branch is created named 'release-{version}' and this is pushed to production. Urgent bug fixes can be merged from the master branch to the current release branch.</dd>
+</dl>
+<p>Pull requests are a way to ensure that a merge only occurs on a branch when the
+appropriate approval processes have been completed. Pull requests allow other team
+members to review the changes in the branch and add comments before the merge</p>
+<p>Once a pull request is approved there are three methods available for the 
+merge commit:</p>
+<ul>
+  <li>Merge Commit - retains full visibility of the changes on both the source and target branch. Commit history will reference both the source and target branches.</li>
+  <li>Squash Commit - all the changes from the source branch are combined into one new commit on the target branch</li>
+  <li>Rebase - changes from the source branch are temporarily stored elsewhere while changes from the master branch are applied to the source. Then the source branch has its own commits re-applied. Once the source is rebased, the commits can then be applied to the master branch. Rebasing retains all the change history on a single branch - the master branch</li>
+</ul>
+
 <h1 id="section5">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <h1 id="section6">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <h1 id="section7">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
