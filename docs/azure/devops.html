@@ -12,7 +12,7 @@ permalink: /azure/devops
   <li><a href="#section3">Seven Habits of DevOps</a></li>
   <li><a href="#section4">Source Control</li>
   <li><a href="#section5">Continuous Integration</a></li>
-  <li><a href="#section6">Terraform Meta-Arguments</a></li>
+  <li><a href="#section6">Continuous Deployment</a></li>
   <li><a href="#section7">Terraform Functions</a></li>
   <li><a href="#section8">Provisioners</a></li>
   <li><a href="#section9">Terraform Modules</a></li>
@@ -156,7 +156,29 @@ from it.</p>
 <p><a href="https://about.gitlab.com/product/continuous-integration/" target="#">GitLab</a> and <a href="https://jenkins.io" target="#">Jenkins</a> offer tools to build continuous integration pipelines</p>
 <p>See <a href="https://docs.microsoft.com/en-gb/learn/modules/create-a-build-pipeline/" target="#">Create a Build Pipeline with Azure Pipelines</a> and <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines" target="#">YAML Schema for Azure Pipelines</a></p>
 
-<h1 id="section6">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
+<h1 id="section6">Continuous Deployment</h1><a href="#toc">Top</a>
+<p>Continuous Deployment is not the same as Continuous Delivery. Continuous 
+Delivery is about building artefacts that are tested and ready to be deployed
+to production. Continuous Deployment, takes this one step further and actually
+includes deployment to production.</p>
+<p>In Azure Devops delivery and deployment are realised using releases. Release
+definitions are created from Pipelines and often begin with an artefact that 
+triggers deployment. Then the enviroment (or stage) to deploy to is identified.</p>
+<p>As with CI, YAML pipelines are the recommended means to define your CD 
+pipelines</p>
+<p>Continuous deployment could become challenging to users who have to deal 
+with the challenges of new releases, potential bugs and possible rollbacks. To 
+minimise the impact a suitable deployment strategy should be chosen. Potential
+deployment strategies are:</p>
+<ol>
+  <li>Blue-Green Deployments. Two identical groups of servers are maintained: one to run the production instance and a second to act as the target for new deployments. A load balancer is used to direct users to the production environment. When a new release is deployed to the other group it is tested and when authorised as ready, the load balancer is used to switch users to the new group. The original environment can be used for rollback should problems occur or can be used as the target for the next release if no problems are found</li>
+  <li>Immutable Servers - a variation of blue-green deployments, where new servers are configured for each deployment and the original production environment is discarded after a grace period (in case rollback is required).</li>
+  <li>Canary deployments - initially only a selected group of users are exposed to the new environments, with further groups added if no problems are found</li>
+  <li>Ring-based deployments - several production environments are maintained for different groups of users. New deployments are issued to one group at a time until the release is propogated to all groups in the ring</li>
+  <li>Feature Flags - new versions are deployed but with the new features turned-off. Feature flags are used to slowly enable the new features. If the features passes quality acceptance, then the flag can be removed from the code base, and the feature becomes part of production environment</li>
+  <li>Fail forward - instead of rolling back when issues are encountered in new releases, bug fixes can be applied to fix the issues.</li>
+</ol>
+
 <h1 id="section7">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <h1 id="section8">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <h1 id="section9">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
