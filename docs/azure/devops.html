@@ -13,8 +13,8 @@ permalink: /azure/devops
   <li><a href="#section4">Source Control</li>
   <li><a href="#section5">Continuous Integration</a></li>
   <li><a href="#section6">Continuous Deployment</a></li>
-  <li><a href="#section7">Terraform Functions</a></li>
-  <li><a href="#section8">Provisioners</a></li>
+  <li><a href="#section7">Dependancy Management</a></li>
+  <li><a href="#section8">Infrastructure As Code</a></li>
   <li><a href="#section9">Terraform Modules</a></li>
 </ul>
 </div>
@@ -180,7 +180,21 @@ deployment strategies are:</p>
 </ol>
 <p>Further reading: <a href="https://docs.microsoft.com/en-gb/azure/devops/pipelines/?view=azure-devops" target="#">Azure Pipeline Docuemntation</a></p>
 
-<h1 id="section7">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
-<h1 id="section8">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
+<h1 id="section7">Dependancy Management</h1><a href="#toc">Top</a>
+<p>To reduce build times, shared libraries can be pre-built for re-use across 
+multiple projects. Azure Artifacts can be used to manage the library of 
+re-usuable components (packages and artifacts) across projects. Further reading: 
+<a href="https://docs.microsoft.com/en-gb/learn/modules/manage-build-dependencies/" target="#">Azure Artifacts</a></p>
+
+<h1 id="section8">Infrastructure As Code</h1><a href="#toc">Top</a>
+<p>Infrastructure As Code (IaC) and Configuration As Code (CaC) is one of the seven
+practices for DevOps. Using declarative templates for deploying your 
+infrastructure means that configuration and infrastructure can be managed in the
+same way that application code is managed. Several tools are available for 
+implementing IaC and CaC:</p>
+<ol>
+  <li>ARM templates - Azure Resource Manager templates are JSON-like templates for declaring the desired state of your infrastructure, and can be deployed using Powershell, Azure CLI or Azure Pipelines</li>
+</ol>
+
 <h1 id="section9">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 
