@@ -8,6 +8,7 @@ localfile: "&lt;<i>./local/path/filename.csv</i>&gt;"
 localfolder: "&lt;<i>./local/path</i>&gt;"
 containerfile: "&lt;<i>container/path/filename.csv</i>&gt;"
 containerfolder: "&lt;<i>container/path</i>&gt;"
+resgroup: "&lt;<i>resgroupname</i>&gt;"
 ---
 
 <div id="toc">
@@ -15,6 +16,7 @@ containerfolder: "&lt;<i>container/path</i>&gt;"
 <ul>
   <li><a href="#section1">JMES Query Syntax</a></li>
   <li><a href="#section2">Storage</a></li>
+  <li><a href="#section3">Deploying ARM Templates</a></li>
 </ul>
 </div>
 
@@ -86,4 +88,10 @@ az storage blob upload-batch --destination {{ page.containername }} --account-na
 <p>List Storage Account SAS keys:</p>
 <pre>
 az storage account keys list --account-name {{ page.stgname }}
+</pre>
+
+<h1 id="section3">Deploying ARM Templates</h1>
+<p>Deploy infrastructure from an ARM Template:</p>
+<pre>
+az group deployment create --resource-group {{ page.resgroup }} --template-file "/path/to/template.json" --parameters "/path/to/parameters.json" --mode [Incremental | Complete]
 </pre>
