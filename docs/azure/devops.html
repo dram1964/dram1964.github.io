@@ -211,7 +211,7 @@ implementing IaC and CaC:</p>
 to be minimised. ORMs are used to represent relational schemas as code: there
 are two common approaches to managing schema changes with ORMs: migration-based 
 and state-based.</p>
-<p>Migration-based approaches keep an order set of changes that need to be applied
+<p>Migration-based approaches keep an ordered set of changes that need to be applied
 to the database to match the changes to ORM code. This becomes difficult when 
 code is being changed on multiple branches. Where multiple migrations are needed,
 they need to be applied in order to match the merge sequence</p>
@@ -224,7 +224,7 @@ dumps and insert actions.</p>
 carefully managed and may result in taking a non-DevOps approach to schema changes
 required by new releases. A Blue-Green approach might work, combined with ETL 
 processes to migrate data from old to new servers</p>
-<p>Using a schemaless database might be an suitable alternative to manage the 
+<p>Using a schemaless database might be a suitable alternative to manage the 
 synchronisation of data and code. As new properties are added/removed from the
 objects in the schemaless database, code can be tweaked to handle objects in 
 both the old and new format, until all old records are migrated to the new
