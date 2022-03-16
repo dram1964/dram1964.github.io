@@ -16,7 +16,7 @@ permalink: /azure/devops
   <li><a href="#section7">Dependancy Management</a></li>
   <li><a href="#section8">Infrastructure As Code</a></li>
   <li><a href="#section9">Databases</a></li>
-  <li><a href="#section10">Terraform Modules</a></li>
+  <li><a href="#section10">Testing to Maintain Quality</a></li>
   <li><a href="#section11">Terraform Modules</a></li>
   <li><a href="#section12">Terraform Modules</a></li>
   <li><a href="#section13">Terraform Modules</a></li>
@@ -231,7 +231,40 @@ both the old and new format, until all old records are migrated to the new
 format</p>
 <p><a href="https://docs.microsoft.com/nl-nl/ef/" target="#">Entity Framework</a> is the Microsoft ORM for .Net and supports migrations.</p>
 
-<h1 id="section10">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
+<h1 id="section10">Testing to Maintain Quality</h1><a href="#toc">Top</a>
+<p>Continuous Deployment requires continuous testing to ensure quality is 
+maintained or improved with each release. Common Metrics for measuring quality
+include:</p>
+<ol>
+  <li>The percentage of integration builds that fail</li>
+  <li>The percentage of code covered by automated tests</li>
+  <li>The change failure rate</li>
+  <li>The amount of unplanned work</li>
+  <li>The number of defects that are being reported by users</li>
+  <li>The number of known issues</li>
+  <li>The amount of technical debt - the cost of sacrificing code quality for something else. As with financial debt, technical debt should be paid off as quickly as possible.</li>
+</ol>
+<p>Automated Functional Tests fall into one of three categories:</p>
+<ul>
+  <li>Unit Tests - used to test the smallest possible scope in an application, e.g. a class or method</li>
+  <li>Integration Tests - testing that multiple units that are supposed to work together</li>
+  <li>System Tests - run against a fully assembled and running application</li>
+</ul>
+<p>Manual Functional Tests fall into one of two categories</p>
+<ul>
+  <li>Scripted Test - formal test cases are prepared to test a new feature and a script is prepared of the actions to carry out the test. This script is then manually executed by the test team</li>
+  <li>Exploratory Test - the test team explore the parts of the application they consider most at risk in the upcoming release. Records are kept of the risks that were checked and the issues that were found</li>
+</ul>
+<p>Non-Functional Tests include</p>
+<ul>
+  <li>Performance testing - how quickly a particular task can be performed in the fully assembled system. Can be automated and results can be compared to results from previous versions of the system</li>
+  <li>Load testing - measuring response times as the number of requests are increased. The breaking point is the moment that response time begins to rise exponentially</li>
+  <li>Usability testing - collecting feedback from users regarding their experience using the new release (user stories)</li>
+</ul>
+<p>Different test types are executed at different stages in the CI/CD pipeline. 
+Unit tests should be executed at each commit and before a merge or pull request. 
+Integration tests should be done both before and after a merge or pull request. System tests and other testing will occur after deployment to a staging environment</p>
+
 <h1 id="section11">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <h1 id="section12">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
 <h1 id="section13">Seven Pracitices of Devops</h1><a href="#toc">Top</a>
