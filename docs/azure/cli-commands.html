@@ -17,9 +17,9 @@ resgroup: "&lt;<i>resgroupname</i>&gt;"
   <li><a href="#section1">JMES Query Syntax</a></li>
   <li><a href="#section2">Storage</a></li>
   <li><a href="#section3">Deploying ARM Templates</a></li>
+  <li><a href="#section4">Create a Service Principal</a></li>
 </ul>
 </div>
-
 
 <h1 id="section1">JMES Query Syntax</h1>
 <cite><a href="https://techcommunity.microsoft.com/t5/itops-talk-blog/how-to-query-azure-resources-using-the-azure-cli/ba-p/360147" target="#">How to query Azure resources using the Azure CLI</a></cite>
@@ -95,3 +95,5 @@ az storage account keys list --account-name {{ page.stgname }}
 <pre>
 az group deployment create --resource-group {{ page.resgroup }} --template-file "/path/to/template.json" --parameters "/path/to/parameters.json" --mode [Incremental | Complete]
 </pre>
+
+<h1 id="section4">Create a Service Principal</h1>

@@ -379,9 +379,24 @@ output "user_enabled" {
 <p>Microsoft documentation on <cite><a href="https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli" target="#">Remote State Storage</a></cite> for terraform</p>
 <p>Storing Terraform state remotely allows multiple developers to work on the same
 environment from different machines. Terraform state can be stored in Azure and then
-referenced in the backend configuration of your Terraform scripts. Public access is allowed
-to Azure storage to store Terraform state. To use remote
-state in Azure Storage, configure the backend block of your terraform block with:</p>
+referenced in the backend configuration of your Terraform scripts. Public access is allowed to Azure storage to store Terraform state.</p>
+<p>First create the remote state storage account in your subscription using the 
+Azure CLI:</p>
+<pre><code>
+az login
+az account set --subscription <subscription_id>
+
+export RESOURCE_GROUP_NAME=rg-remotestate
+export STORAGE_ACCOUNT_NAME=stgremotestate
+export CONTAINER_NAME=statefiles
+
+az group create --name $RESOURCE_GROUP_NAME --location uksouth
+
+az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob
+
+az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME
+</code></pre>
+<p>To use remote state in Azure Storage, configure the backend block of your terraform block with:</p>
 <ul>
   <li>resource_group_name</li>
   <li>storage_account_name</li>
@@ -404,6 +419,16 @@ terraform {
     key                  = "project1.terraform.tfstate"
   }
 }
+</code></pre>
+<p>Additionally you'll need to find a suitable way to provide the $ARM_ACCESS_KEY to terraform. This can be done using an environment variable:</p>
+<pre><code>
+ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
+export ARM_ACCESS_KEY=$ACCOUNT_KEY
+</code></pre>
+<p>A more secure method would be to store and retrieve the value from a 
+key-vault:</p>
+<pre><code>
+export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --vault-name myKeyVault --query value -o tsv)
 </code></pre>
 
 <h1 id="section6">Terraform Meta-Arguments</h1> <a href="#toc">Top</a>
