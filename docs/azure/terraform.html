@@ -386,9 +386,9 @@ Azure CLI:</p>
 az login
 az account set --subscription <subscription_id>
 
-export RESOURCE_GROUP_NAME=rg-remotestate
-export STORAGE_ACCOUNT_NAME=stgremotestate
-export CONTAINER_NAME=statefiles
+export RESOURCE_GROUP_NAME=&lt;resource-group-name&gt;
+export STORAGE_ACCOUNT_NAME=&lt;storage-account-name&gt;
+export CONTAINER_NAME=&lt;container-name&gt;
 
 az group create --name $RESOURCE_GROUP_NAME --location uksouth
 
@@ -413,9 +413,9 @@ terraform {
     }
   }
   backend "azurerm" {
-    resource_group_name  = "rg-remotestate"
-    storage_account_name = "stgremotestate"
-    container_name       = "statefiles"
+    resource_group_name  = "&lt;resource-group-name&gt;"
+    storage_account_name = "&lt;storage-account-name&gt;"
+    container_name       = "&lt;container-name&gt;"
     key                  = "project1.terraform.tfstate"
   }
 }
