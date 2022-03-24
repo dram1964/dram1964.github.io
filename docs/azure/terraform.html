@@ -66,11 +66,23 @@ provider "azurerm" {
 <p>Sensitive values should be supplied as environment variables. The azurerm 
 provider will automatically use the following environment variables, if set:</p>
 <ol>
-  <li>ARM_SUBSCRIPTION_ID</li>
   <li>ARM_CLIENT_ID</li>
   <li>ARM_CLIENT_SECRET</li>
+  <li>ARM_SUBSCRIPTION_ID</li>
   <li>ARM_TENANT_ID</li>
 </ol>
+<p>Alternatively, you can specify these values in the provider block:</p>
+<pre><code>
+provider "azurerm" {
+  client_id         = var.client_id
+  client_secret     = var.client_secret
+  subscription_id   = var.subscription_id
+  tenant_id         = var.tenant_id
+
+  features {}
+}
+</code></pre>
+
 
 <h2>variable</h2>
 <p>Used to accept external values as parameters to be used by all other blocks, apart from the terraform block</p>
@@ -375,7 +387,7 @@ output "user_enabled" {
 </pre>
 
 <h1 id="section5">Remote State </h1> <a href="#toc">Top</a>
-<p>Terraform documentation on <cite><a href="https://www.terraform.io/language/settings/backends/azurerm">Terraform Backend</a></cite></p>
+<p>Terraform documentation on <cite><a href="https://www.terraform.io/language/settings/backends/azurerm" target="#">Terraform Backend</a></cite></p>
 <p>Microsoft documentation on <cite><a href="https://docs.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli" target="#">Remote State Storage</a></cite> for terraform</p>
 <p>Storing Terraform state remotely allows multiple developers to work on the same
 environment from different machines. Terraform state can be stored in Azure and then
@@ -384,7 +396,7 @@ referenced in the backend configuration of your Terraform scripts. Public access
 Azure CLI:</p>
 <pre><code>
 az login
-az account set --subscription <subscription_id>
+az account set --subscription &lt;subscription_id&gt;
 
 export RESOURCE_GROUP_NAME=&lt;resource-group-name&gt;
 export STORAGE_ACCOUNT_NAME=&lt;storage-account-name&gt;
@@ -420,13 +432,37 @@ terraform {
   }
 }
 </code></pre>
-<p>Additionally you'll need to find a suitable way to provide the $ARM_ACCESS_KEY to terraform. This can be done using an environment variable:</p>
+<p>When you run <code>terraform init</code>, terraform will need to authenticate to Azure to create
+the backend. If you have already logged-in with Azure CLI, terraform will use this authenticated 
+connection to create the backend for you. If your deploying your infrastructure using Terraform 
+Cloud or Azure DevOps you can create an SAS token to authenticate to the backend Storage Account.
+To obtain SAS certificate for a Storage Account, you can use the following AZ CLI commands:</p>
+<pre><code>
+ACCOUNT_KEY=$(az storage account keys list --resource-group rg-uks-terraform-mgmt --account-name stgremotestate --query '[0].value' -o tsv)
+END_DATE=`date -u -d "1 year" '+%Y-%m-%dT%H:%MZ'`
+SAS_KEY=$(az storage container generate-sas -n statefiles --account-key $ACCOUNT_KEY --account-name stgremotestate --https-only --permissions dlrw --expiry $END_DATE -o tsv)
+ARM_SAS_TOKEN=$SAS_KEY
+</code></pre>
+<p>Terraform will automatically use the SAS key if you assign this to the environment variable 
+$ARM_SAS_TOKEN, or you can add the value to your backend config using 'sas_token':</p>
+
+<pre><code>
+  backend "azurerm" {
+    resource_group_name  = "&lt;resource-group-name&gt;"
+    storage_account_name = "&lt;storage-account-name&gt;"
+    container_name       = "&lt;container-name&gt;"
+    key                  = "project1.terraform.tfstate"
+    sas_token		 = var.sas_key_value
+  }
+</code></pre>
+
+
+<p>Alternatively you could use an access key for the Storage Account to authenticate the backend. This can be done using an environment variable:</p>
 <pre><code>
 ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
 export ARM_ACCESS_KEY=$ACCOUNT_KEY
 </code></pre>
-<p>A more secure method would be to store and retrieve the value from a 
-key-vault:</p>
+<p>A more secure method would be to store and retrieve the value from a key-vault:</p>
 <pre><code>
 export ARM_ACCESS_KEY=$(az keyvault secret show --name terraform-backend-key --vault-name myKeyVault --query value -o tsv)
 </code></pre>
