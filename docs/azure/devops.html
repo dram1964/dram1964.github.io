@@ -127,13 +127,14 @@ tracked files</p>
 <p>There are three popular branching strategies:</p>
 <dl>
   <dt><a href="https://docs.github.com/en/get-started/quickstart/github-flow" target ="#">GitHub Flow</a></dt>
-  <dd>In GitHub Flow there is one master branch that is always in a deployable state. New features are started in a branch and are not merged back to the master until complete.</dd>
+  <dd>In GitHub Flow there is one <b>main</b> branch that is always in a deployable state. New features are started in a new branch and are not merged back to the <b>main</b> branch until complete.</dd>
   <dt><a href="https://datasift.github.io/gitflow/IntroducingGitFlow.html" target ="#">GitFlow</a></dt>
-  <dd>GitFlow involves creating a branch of the master called Develop whenever you start work on a new version. From Develop, new branches are created for each new feature being developed. When the new feature is complete it is merged back into Develop. When you want to release a new version of the application, you create a release branch of the develop branch. Once testing and bug fixes are applied to the release branch, this branch is then merged into master branch and tagged with the version number. Changes from testing the release are also merged back to the Develop branch for the next round of development. Urgent bug fixes are carried out on a new branch from the master, and are merged back to both the master and Develop branches when ready.</dd>
+  <dd>GitFlow involves creating a branch from <b>main</b> called <b>develop</b> whenever you start work on new features. From <b>develop</b>, new branches are created for each new feature being developed. When the new feature is complete it is merged back into <b>develop</b>. When you want to release a new version of the application, you create a <b>release</b> branch from the develop branch. Once testing and bug fixes are applied to the <b>release</b> branch, this branch is then merged into <b>main</b> and tagged with the version number. Changes from testing the release are also merged back to the <b>develop</b> branch for the next round of development. Urgent bug fixes are carried out on a new branch from <b>main</b>, and are merged back to both <b>main</b> and <b>develop</b> branches when ready.</dd>
   <dt><a href="https://devblogs.microsoft.com/devops/release-flow-how-we-do-branching-on-the-vsts-team/" target="#">Release Flow</a></dt>
-  <dd>Involves working with short-lived topic branches just as with GitFlow. However, the master branch is never released to production. Instead when a new version is
- to be deployed, a new branch of the master branch is created named 'release-{version}' and this is pushed to production. Urgent bug fixes can be merged from the master branch to the current release branch.</dd>
+  <dd>Involves working with short-lived topic branches just as with GitFlow. However, the <b>main</b> branch is never released to production. Instead when a new version is to be deployed, a new branch from the <b>main</b> branch is created named <b>release-{version}</b> and this is pushed to production. Urgent bug fixes can be merged from the <b>main</b> branch to the current <b>release</b> branch.</dd>
 </dl>
+
+<h2>Pull Requests</h2>
 <p>Pull requests are a way to ensure that a merge only occurs on a branch when the
 appropriate approval processes have been completed. Pull requests allow other team
 members to review the changes in the branch and add comments before the merge</p>
@@ -158,6 +159,90 @@ control for your project and it is then available on all branches and will be
 subject to the same policies applied to changing the code.</p>
 <p>After saving a YAML file in the repository, you can create a build definition
 from it.</p>
+<p>The default YAML pipeline file in Azure DevOps is called 'azure-pipelines.yml'. 
+The pipeline definition should begin with trigger actions that can be 
+monitoring either pull requests (<b>pr</b>) or commits (<b>trigger</b>):</p>
+<pre><code>
+pr:
+  branches:
+    include: ["main", "release", "develop"]
+
+trigger:
+- main
+- release
+- develop
+- feature/*
+</code></pre>
+<p>Pipelines are configured to run on an agent using the <b>pool</b> block:</p>
+<pre><code>
+pool:
+  vmImage: ubuntu-18.04
+</code></pre>
+<p>Variables can be configured for later use in the pipeline:</p>
+<pre><code>
+variables:
+  folder_context: $(System.DefaultWorkingDirectory)/Terraform/environments
+  terraform_version: 1.1.7
+  is_main: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  is_test: $[eq(variables['Build.SourceBranch'], 'refs/heads/release')]
+  is_dev: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+  is_feature: $[startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/')]
+
+</pre></code>
+<p>The rest of the pipeline will define the various stages to be executed. 
+Typically this will include:
+<ol>
+  <li>a build stage, where the new code is tested and</li>
+  <li>deployment stages, where the code is deployed to various environments</li>
+</ol>
+<p>Each stage will define a series of jobs, with each job executing one or more
+steps:</p>
+<pre><code>
+stages:
+- stage: terraform_build
+  jobs:
+  - job: terraform_plan
+    steps:
+    - task: AzureKeyVault@1
+      inputs:
+        azureSubscription: $(subscription_id)
+        KeyVaultName: $(keyvault_name)
+        SecretsFilter: 'state-resource-group, state-storage-container, state-storage-account, state-file-name, state-sas-token, client-id, client-secret, subscription-id, tenant-id'
+      displayName: 'Get key vault secrets as pipeline variables'
+    - bash: |
+        ...
+        ---
+      
+</code></pre>
+<p>For IaC, the deployment stages should be executed conditionally: deployments
+should only occur to each environment when the corresponding source-code branch
+is updated:</p>
+<pre><code>
+- stage: development_env
+  condition: eq(variables.is_dev, 'true')
+  jobs:
+  - deployment: development_environment
+    displayName: development_environment
+    pool:
+      vmImage: Ubuntu-18.04
+    environment: dev
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - checkout: self
+          - task: AzureKeyVault@1
+            inputs:
+              azureSubscription: $(subscription_id)
+              KeyVaultName: $(keyvault_name)
+              SecretsFilter: 'state-resource-group, state-storage-container, state-storage-account, state-file-name, state-sas-token, client-id, client-secret, subscription-id, tenant-id'
+            displayName: 'Get key vault secrets as pipeline variables'
+
+          - bash: |
+            ...
+            ...
+
+</code></pre>
 <p><a href="https://about.gitlab.com/product/continuous-integration/" target="#">GitLab</a> and <a href="https://jenkins.io" target="#">Jenkins</a> offer tools to build continuous integration pipelines</p>
 <p>See <a href="https://docs.microsoft.com/en-gb/learn/modules/create-a-build-pipeline/" target="#">Create a Build Pipeline with Azure Pipelines</a> and <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines" target="#">YAML Schema for Azure Pipelines</a></p>
 
