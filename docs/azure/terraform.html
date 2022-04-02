@@ -438,7 +438,7 @@ terraform {
 the backend. If you have already logged-in with Azure CLI, terraform will use this authenticated 
 connection to create the backend for you. If your deploying your infrastructure using Terraform 
 Cloud or Azure DevOps you can create an SAS token to authenticate to the backend Storage Account.
-To obtain SAS certificate for a Storage Account, you can use the following AZ CLI commands:</p>
+To obtain SAS certificate for a Storage Account, you can use the following Azure CLI commands:</p>
 <pre><code>
 ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
 END_DATE=`date -u -d "1 year" '+%Y-%m-%dT%H:%MZ'`
@@ -471,6 +471,22 @@ for added security:</p>
 <pre><code>
 export ARM_SAS_TOKEN=$(az keyvault secret show --name terraform-backend-key --vault-name myKeyVault --query value -o tsv)
 </code></pre>
+<p>Rather than placing the values for the backend-config keys in your 
+Terraform scripts you can store these values in a config file and use the '-backend-config' option in during terraform initialisation to use those values:</p>
+<pre><code>
+#### BEGIN /app/backend_config.conf #######
+resource_group_name = ""
+storage_account_name = ""
+container_name = ""
+key = ""
+sas_token = ""
+#### END /app/backend_config.conf   #######
+
+terraform init --backend-config=/app/backend_config.conf
+```
+</code></pre>
+<p>The value for sas_token can be omitted from the backend-config file, and 
+instead supplied using the ARM_SAS_TOKEN environment variable.</p>
 
 <h1 id="section6">Terraform Meta-Arguments</h1> <a href="#toc">Top</a>
 <h2>Count</h2>
