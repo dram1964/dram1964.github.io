@@ -214,6 +214,9 @@ stages:
         ---
       
 </code></pre>
+<p>Combining the above snippets will define a build pipeline that
+will be triggered by commits to <b>main</b>, <b>develop</b>, 
+<b>release</b> and any branch that begins with <b>feature/</b><p>
 <p>For IaC, the deployment stages should be executed conditionally: deployments
 should only occur to each environment when the corresponding source-code branch
 is updated:</p>
@@ -243,6 +246,11 @@ is updated:</p>
             ...
 
 </code></pre>
+<p>Adding the above code to our pipeline will mean that any pull
+request to the <b>develop</b> branch will result in both the build 
+stage (Continuous Integration) and the deployment to the development environment (Continuous Delivery) being executed</p>
+<p>Stages can be added for both the testing environment and the production environment to conditionally execute after pull 
+requests to their respective branches: <b>release</b> and <b>main</b>.</p> 
 <p><a href="https://about.gitlab.com/product/continuous-integration/" target="#">GitLab</a> and <a href="https://jenkins.io" target="#">Jenkins</a> offer tools to build continuous integration pipelines</p>
 <p>See <a href="https://docs.microsoft.com/en-gb/learn/modules/create-a-build-pipeline/" target="#">Create a Build Pipeline with Azure Pipelines</a> and <a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema/?view=azure-pipelines" target="#">YAML Schema for Azure Pipelines</a></p>
 
