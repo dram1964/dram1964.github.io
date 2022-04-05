@@ -1,0 +1,123 @@
+---
+layout: page
+title: "Git Commands"
+permalink: /azure/git-commands
+stgname: "&lt;<i>stgname&gt;</i>"
+containername: "&lt;<i>containername</i>&gt;"
+localfile: "&lt;<i>./local/path/filename.csv</i>&gt;"
+localfolder: "&lt;<i>./local/path</i>&gt;"
+containerfile: "&lt;<i>container/path/filename.csv</i>&gt;"
+containerfolder: "&lt;<i>container/path</i>&gt;"
+resgroup: "&lt;<i>resgroupname</i>&gt;"
+---
+
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">Getting a Repository</a></li>
+  <li><a href="#section2">Recording Changes</a></li>
+  <li><a href="#section3">Viewing Changes</a></li>
+  <li><a href="#section4">Working with Remotes</a></li>
+  <li><a href="#section5">Tagging</a></li>
+</ul>
+</div>
+
+<h1 id="section1">Getting a Repository</h1> <a href="#toc">Top</a>
+<p>Turn an existing local directory into a git repository:</p>
+<pre><code>git init</code></pre>
+<p>Add a <b>.gitignore</b> to exclude files from tracking by Git</p>
+<p>Clone a repository with:</p>
+<pre><code>git clone &lt;repository_url&gt;</code></pre>
+<p>Clone takes a full copy of all the data the remote repository has. 
+To see all the branches of the repository, use:</p>
+<pre><code>git branch -a</code></pre>
+
+<h1 id="section2">Recording Changes</h1> <a href="#toc">Top</a>
+<p>To start tracking changes to a file, use:</p>
+<pre><code>git add &lt;filename&gt;</code></pre>
+<p>To see what you've changed but not yet staged:</p>
+<pre><code>git diff</code></pre>
+<p>To see what you've staged but not yet committed:</p>
+<pre><code>git diff --staged</code></pre>
+<p>To unstage a file</p>
+<pre><code>
+git reset HEAD &lt;filename&gt;
+# Newer version of above command
+git restore --staged &lt;filename&gt;
+</code></pre>
+<p>Commit staged changes with a commit message:</p>
+<pre><code>git commit -m "Commit message"</code></pre>
+<p>To amend the previous commit, stage the additional files and then use:</p>
+<pre><code>git commit --amend</code></pre>
+<p>To discard changes to a file since the last commit:</p>
+<pre><code>
+git checkout -- &lt;filename&gt;
+# Newer version of above command
+git restore &lt;filename&gt;
+</code></pre>
+<p>To remove a file from the staging area and your local directory:</p>
+<pre><code>git rm &lt;filename&gt;</code></pre>
+<p>To remove a file from the staging area but keep it in your local directory:</p>
+<pre><code>git rm --cached &lt;filename&gt;</code></pre>
+<p>To remove all files matching a pattern (the wildcard needs to be escaped with backslash):</p>
+<pre><code>git rm data/\*.csv</code></pre>
+<p>To rename a file:</p>
+<pre><code>git mv &lt;filename.old&gt; &lt;filename.new&gt;</code></pre>
+
+<h1 id="section3">Viewing Changes</h1> <a href="#toc">Top</a>
+<p>To view the history of commits:</p>
+<pre><code>git log</code></pre>
+<p>To view the changes associated with the last two commits:</p>
+<pre><code>git log -p -2</code></pre>
+<p>To view changes for a particular file:</p>
+<pre><code>git log -- &lt;path_to_file&gt;</code></pre>
+<p>To view all commits with one line per commit:</p>
+<pre><code>git log --pretty=oneline</code></pre>
+
+<h1 id="section4">Working with Remotes</h1> <a href="#toc">Top</a>
+<p>You can query the remote servers configured for your local copy with:</p>
+<pre><code>git remote -v</code></pre>
+<p>For a single remote you will receive two URLs: one for <b>fetch</b> and one for <b>push</b></p>
+<p>After cloning a repository the default remote is named <b>origin</b>. You can add additional
+remotes:</p>
+<pre><code>git remote add &lt;abbreviaion&gt; &lt;URL&gt;</code></pre>
+<p>You can then fetch from the new remote:</p>
+<pre><code>git fetch &lt;abbreviaion&gt;</code></pre>
+<p>You can then checkout the new remote or merge it into one of your branches</p>
+<pre><code>git checkout abbreviation/master</code></pre>
+<p>The fetch command pulls all the data from the specified remote. <code>git fetch origin</code>
+will pull any new data from the origin since you last cloned it. Fetch will not 
+automatically merge the data with your own work. If your current branch is set up to track a 
+remote branch <code>git pull</code> will fetch and merge that branch to your current branch</p>
+<p>To push your changes use</p>
+<pre><code>git push origin master</code></pre>
+<p>This will not work if someone else has pushed to origin/master since you cloned it. You will
+first need to fetch their work and merge this into yours before you can push successfully</p>
+<p>To inspect the remote branch, use:</p>
+<pre><code>git remote show origin</code></pre>
+<p>The output of this command will show you:</p>
+<ol>
+  <li>which local branches are tracking which remote branches</li>
+  <li>which remote branches you don't currently have</li>
+  <li>which local branches no longer exist on the remote (stale branches)</li>
+</ol>
+<p>Running <code>git fetch origin</code> will collect the remote branches that you don't currently 
+have and <code>git remote prune</code> to remove stale branches</p>
+
+<h1 id="section5">Tagging</h1> <a href="#toc">Top</a>
+<p>To add a tag to the current commit:</p>
+<pre><code>git tag -a v0.1 -m "Tag message"</code></pre>
+<p>Add a tag to a specific commit</p>
+<pre><code>git tag -a v0.2 &lt;commit checksum&gt;</code></pre>
+<p>List tags</p>
+<pre><code>git tag</code></pre>
+<p>Tags are not automatically transferred to the remote. They need to be explicitly mentioned:</p>
+<pre><code>git push origin v0.2</code></pre>
+<p>To push all tags:</p>
+<pre><code>git push origin --tags</code></pre>
+<p>Tags can be removed using:</p>
+<pre><code>git tag -d v0.2</code></pre>
+<p>To delete the tag from a remote use:</p>
+<pre><code>git push origin --delete &lt;tagname&gt;</code></pre>
+<p>Show the commit annotated with a specific tag:</p>
+<pre><code>git show v0.1</code></pre>
