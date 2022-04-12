@@ -19,6 +19,7 @@ resgroup: "&lt;<i>resgroupname</i>&gt;"
   <li><a href="#section3">Viewing Changes</a></li>
   <li><a href="#section4">Working with Remotes</a></li>
   <li><a href="#section5">Tagging</a></li>
+  <li><a href="#section6">Branches</a></li>
 </ul>
 </div>
 
@@ -71,8 +72,10 @@ git restore &lt;filename&gt;
 <pre><code>git log -p -2</code></pre>
 <p>To view changes for a particular file:</p>
 <pre><code>git log -- &lt;path_to_file&gt;</code></pre>
-<p>To view all commits with one line per commit:</p>
-<pre><code>git log --pretty=oneline</code></pre>
+<p>To view all commits for current branch with one line per commit:</p>
+<pre><code>git log --oneline</code></pre>
+<p>To view all commits for <b>all</b> branches with one line per commit:</p>
+<pre><code>git log --oneline --all</code></pre>
 
 <h1 id="section4">Working with Remotes</h1> <a href="#toc">Top</a>
 <p>You can query the remote servers configured for your local copy with:</p>
@@ -121,3 +124,23 @@ have and <code>git remote prune</code> to remove stale branches</p>
 <pre><code>git push origin --delete &lt;tagname&gt;</code></pre>
 <p>Show the commit annotated with a specific tag:</p>
 <pre><code>git show v0.1</code></pre>
+
+<h1 id="section6">Branches</h1> <a href="#toc">Top</a>
+<p>Commits are pointers to the snapshots for the objects that had been staged. The commit also contains commit metatdata (author, email, committer) and a pointer to the previous commit. The pointer 
+points to the root tree for the commit, which contains pointers to the blobs stored with the commit. A branch in Git is simply a pointer to a commit. Each time you commit on a branch, the branch 
+pointer moves forward to the current commit. Creating a new branch, creates a new pointer to the 
+current commit. A special pointer called <b>HEAD</b> is maintained to represent the current 
+branch that you are on. </p>
+<p>There are multiple ways to create and switch to a new branch:</p>
+<ol>
+  <li>
+    <pre>git branch &lt;branchname&gt;
+git checkout &lt;branchname&gt;</pre></li>
+  <li><pre>git checkout -b &lt;branchname&gt;</pre></li>
+  <li><pre>git switch -c &lt;branchname&gt;</pre></li>
+</ol>
+<p>To switch to an existing branch use either one of:</p>
+<ol>
+  <li><pre>git checkout &lt;branchname&gt;</pre></li>
+  <li><pre>git switch &lt;branchname&gt;</pre></li>
+</ol>
