@@ -144,3 +144,43 @@ git checkout &lt;branchname&gt;</pre></li>
   <li><pre>git checkout &lt;branchname&gt;</pre></li>
   <li><pre>git switch &lt;branchname&gt;</pre></li>
 </ol>
+<p>New branches will have their commit pointer pointing to the same commit as the branch it 
+was created from. When new commits are added to the branch, the pointer is moved on to a 
+new commit. To bring these commits into another branch you can use the merge subcommand</p>
+<pre><code>
+git switch -c feature123
+### edit and commit some files
+git switch main
+git merge feature123
+</code></pre>
+<p>Providing no changes have been made in <b>main</b> the git merge will create a fast-forward
+merge: where the commits from the merged branch are added to the commits on the <b>main</b>
+branch and the pointer from <b>main</b> is moved to the last commit from the merged branch.</p>
+<p>If the <b>main</b> branch has commits after the branch to be merged was created, the current
+branch of <b>main</b> is no longer a direct ancestor of the commits on the branch to be merged-in.
+In this case, Git creates a new snapshot that points to the latest commits on both branches and 
+incorporates the changes from both branches. This is known as a merge commit.</p>
+<p>Occaisionally, conflicts will occur during merge commits. This happens when both branches have
+made changes to the same file. In this case, <code>git merge</code> will report the conflict and
+the merge commit will be paused. Run <code>git status</code> to see which files need manual 
+attention. The file will contain the conflicting lines from both files. After the conflicts have 
+been resolved, the merge commit can be completed using <code>git add</code> followed by
+<code>git commit</code>. 
+<p>The <code>git branch</code> contains lots of useful options for managing your branches. The 
+<code>--merged</code> switch shows branches that have been merged into the current branch and 
+the <code>--no-merged</code> command shows branches that have not yet been merged in. To 
+delete a branch, use:</p>
+<pre><code>git branch -d &lt;branchname&gt;</code></pre>
+<p>If the branch to be deleted contains work that has not yet been merged in, the command will 
+fail. You can still force the delete using:</p>
+<pre><code>git branch -D &lt;branchname&gt;</code></pre>
+<p>Use the <code>--move</code> switch to rename a branch:</p>
+<pre><code>git branch --move &lt;old_name&gt; &lt;new-name&gt;</code></pre>
+<p>This will change the name of the local copy of the branch. To replicate this on the 
+server you will need to both push the new branch name and delete the old branch name on the 
+remote:</p>
+<pre><code>git push -u origin &lt;new-name&gt;
+git push origin --delete &lt;old_name&gt;</code></pre>
+<p>Care should be taken when re-naming and deleting remote branches that may be in use or ancestors
+for other branches held locally elsewhere. Also, if pipelines depend on the branch to be renamed, 
+these scripts will also need to be adjusted for the new name</p>
