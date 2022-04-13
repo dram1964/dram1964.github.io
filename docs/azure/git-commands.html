@@ -20,6 +20,7 @@ resgroup: "&lt;<i>resgroupname</i>&gt;"
   <li><a href="#section4">Working with Remotes</a></li>
   <li><a href="#section5">Tagging</a></li>
   <li><a href="#section6">Branches</a></li>
+  <li><a href="#section7">Rebasing</a></li>
 </ul>
 </div>
 
@@ -184,3 +185,56 @@ git push origin --delete &lt;old_name&gt;</code></pre>
 <p>Care should be taken when re-naming and deleting remote branches that may be in use or ancestors
 for other branches held locally elsewhere. Also, if pipelines depend on the branch to be renamed, 
 these scripts will also need to be adjusted for the new name</p>
+<p>Remote tracking branches are local references to the state of remote branches at the time that
+you last pulled them. To synchronise your remote tracking branches use:</p>
+<pre><code>git fetch &lt;remotename&gt;</code></pre>
+<p>When you want to share a local branch, you can push that up to the server:</p>
+<pre><code>git push &lt;remotename&gt; &lt;branchname&gt;</code></pre>
+<p>This will allow others to pull the branch from the server using:</p>
+<pre><code>git fetch origin</code></pre>
+<p>To create a local copy of the new branch, you will need to checkout the branch:</p>
+<pre><code>git checkout -b &lt;branchname&gt; &lt;origin/branchname&gt;</code></pre>
+<p>If the local branch does not already exists and exists on only one remote, 
+this command can be shortened to:</p>
+<pre><code>git checkout &lt;branchname&gt;</code></pre>
+<p>The <code>-b</code> option allows you to specify an alternative name for the tracking branch</p>
+<p>To see the difference between your local tracking branches and the remote branches at the
+time you last fetched them, use:</p>
+<pre><code>git branch -vv</code></pre>
+<p>To see the difference between your local tracking branches and the current state of the remotes, 
+you will need to fetch them first:</p>
+<pre><code>git fetch -all 
+git branch -vv</code></pre>
+<p>Fetching a remote tracking branch will not update your local working directory. You will need 
+to merge the remote tracking branch into your working directory manually:</p>
+<pre>git merge &lt;origin/branchname&gt;</code></pre>
+<p>Alternatively <code>git pull</code> does both a fetch and a merge</p>
+
+<h1 id="section7">Rebasing</h1> <a href="#toc">Top</a>
+<p>When two branches have divergent commit histories, then a merge commit will create a new 
+snapshot from the most recent commits on both branches and the most recent common ancestor commit for both branches. An alternative approach is the available using the <code>rebase</code> command. 
+Rebase will:</p>
+<ol>
+  <li>stash away the divergent commits from the current branch</li>
+  <li>rewind the current branch to the common ancestor for both branches</li>
+  <li>apply the commits from the source branch</li>
+  <li>re-apply the commits that were previously stashed away</li>
+</ol>
+<p>To rebase the <b>feature1</b> branch to the main branch:</p>
+<pre><code>
+git checkout feature1
+git rebase main
+</code></pre>
+<p>The <b>feature1</b> branch will now have the commit history from <b>main</b>, 
+with the additional commits from <b>feature1</b> appended. When you are ready to merge 
+<b>feature1</b> back to <b>main</b> a fast-forward merge will suffice:</p>
+<pre><code>
+git checkout main
+git merge feature1
+</code></pre>
+<p>Rebasing is typically used to where you want to cleanly apply your commits to a remote branch. 
+You can rebase your local branch to the remote branch and then create a pull request, so that
+when the request is approved, the new commits can be applied without fear of merge conflicts.</p>
+<p>Rebasing whilst keeping all the changes applied in a branch will result in new commits being 
+created when the original commits are re-applied. This could cause a problem if someone else 
+has created work based on your original branch. The simple lesson from all this is <b>never rebase anything that you've pushed somewhere else.</b></p>
