@@ -97,3 +97,5 @@ az group deployment create --resource-group {{ page.resgroup }} --template-file 
 </pre>
 
 <h1 id="section4">Create a Service Principal</h1>
+<p>Create a service principal with Contributor role on the specified subscription:</p>
+<pre><code>az ad sp create-for-rbac --scopes /subscriptions/&lt;subscription_id&gt; --role Contributor --name &lt;my_service_principal_name&gt;</code></pre>
