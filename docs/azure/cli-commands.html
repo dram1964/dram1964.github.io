@@ -70,24 +70,33 @@ az account set --subscription $(az account list --query "[?contains(name, 'resea
 </pre>
 
 <h1 id="section2">Storage</h1>
-<p>Add a container to your Storage Account</p>
-<pre>
-az storage container create --name {{ page.containername }} --account-name {{ page.stgname }}
-</pre>
+<p>Create a storage account and container</p>
+<pre><code>
+RESOURCE_GROUP_NAME={{ page.resgroup }}
+LOCATION=uksouth
+STORAGE_ACCOUNT_NAME={{ page.stgname }}
+CONTAINER_NAME={{ page.containername }}
+
+az group create --name $RESOURCE_GROUP_NAME --location $LOCATION
+
+az storage account create --resource-group $RESOURCE_GROUP_NAME --name $STORAGE_ACCOUNT_NAME --sku Standard_LRS --encryption-services blob
+
+az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME
+</code></pre>
 
 <p>Upload a file to blob storage</p>
 <pre>
-az storage blob upload --account-name {{ page.stgname }} --container-name {{ page.containername }} --file {{ page.localfile }} --name {{ page.containerfile }}
+az storage blob upload --account-name $STORAGE_ACCOUNT_NAME --container-name $CONTAINER_NAME --file {{ page.localfile }} --name {{ page.containerfile }}
 </pre>
 
 <p>Upload a folder to blob storage</p>
 <pre>
-az storage blob upload-batch --destination {{ page.containername }} --account-name {{ page.stgname }} --destination-path {{ page.containerfolder }} --source {{ page.localfolder }}
+az storage blob upload-batch --destination $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --destination-path {{ page.containerfolder }} --source {{ page.localfolder }}
 </pre>
 
 <p>List Storage Account SAS keys:</p>
 <pre>
-az storage account keys list --account-name {{ page.stgname }}
+az storage account keys list --account-name $STORAGE_ACCOUNT_NAME
 </pre>
 
 <h1 id="section3">Deploying ARM Templates</h1>
