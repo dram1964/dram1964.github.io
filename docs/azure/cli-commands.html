@@ -9,6 +9,7 @@ localfolder: "&lt;<i>./local/path</i>&gt;"
 containerfile: "&lt;<i>container/path/filename.csv</i>&gt;"
 containerfolder: "&lt;<i>container/path</i>&gt;"
 resgroup: "&lt;<i>resgroupname</i>&gt;"
+keyvault: "&lt;<i>keyvault_name</i>&gt;"
 ---
 
 <div id="toc">
@@ -17,11 +18,12 @@ resgroup: "&lt;<i>resgroupname</i>&gt;"
   <li><a href="#section1">JMES Query Syntax</a></li>
   <li><a href="#section2">Storage</a></li>
   <li><a href="#section3">Deploying ARM Templates</a></li>
-  <li><a href="#section4">Create a Service Principal</a></li>
+  <li><a href="#section4">Service Principals</a></li>
+  <li><a href="#section5">Key Vaults</a></li>
 </ul>
 </div>
 
-<h1 id="section1">JMES Query Syntax</h1>
+<h1 id="section1">JMES Query Syntax</h1> <a href="#toc">Top</a>
 <cite><a href="https://techcommunity.microsoft.com/t5/itops-talk-blog/how-to-query-azure-resources-using-the-azure-cli/ba-p/360147" target="#">How to query Azure resources using the Azure CLI</a></cite>
 <p>By default, az cli queries return JSON output. You can change the output format
 using the --output switch. Typical values are either 'table' or 'tsv'. </p>
@@ -69,7 +71,7 @@ az account set --subscription $SUB
 az account set --subscription $(az account list --query "[?contains(name, 'research')].[id]" -o tsv)
 </pre>
 
-<h1 id="section2">Storage</h1>
+<h1 id="section2">Storage</h1> <a href="#toc">Top</a>
 <p>Create a storage account and container</p>
 <pre><code>
 RESOURCE_GROUP_NAME={{ page.resgroup }}
@@ -94,17 +96,40 @@ az storage blob upload --account-name $STORAGE_ACCOUNT_NAME --container-name $CO
 az storage blob upload-batch --destination $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME --destination-path {{ page.containerfolder }} --source {{ page.localfolder }}
 </pre>
 
-<p>List Storage Account SAS keys:</p>
+<p>List Storage Account keys:</p>
 <pre>
 az storage account keys list --account-name $STORAGE_ACCOUNT_NAME
 </pre>
 
-<h1 id="section3">Deploying ARM Templates</h1>
+<p>Generate and capture SAS keys to access a storage container</p>
+<pre>
+ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
+END_DATE=`date -u -d "1 year" '+%Y-%m-%dT%H:%MZ'`
+SAS_KEY=$(az storage container generate-sas -n $CONTAINER_NAME --account-key $ACCOUNT_KEY --account-name $STORAGE_ACCOUNT_NAME --https-only --permissions dlrw --expiry $END_DATE -o tsv)
+</pre>
+
+
+<h1 id="section3">Deploying ARM Templates</h1> <a href="#toc">Top</a>
 <p>Deploy infrastructure from an ARM Template:</p>
 <pre>
 az group deployment create --resource-group {{ page.resgroup }} --template-file "/path/to/template.json" --parameters "/path/to/parameters.json" --mode [Incremental | Complete]
 </pre>
 
-<h1 id="section4">Create a Service Principal</h1>
+<h1 id="section4">Service Principals</h1>
 <p>Create a service principal with Contributor role on the specified subscription:</p>
 <pre><code>az ad sp create-for-rbac --scopes /subscriptions/&lt;subscription_id&gt; --role Contributor --name &lt;my_service_principal_name&gt;</code></pre>
+<p>Grant keyvault permissions to a service principal</p>
+<pre>
+SP_OBJECT_ID=$(az ad sp list --display-name $SERVICE_PRINCIPAL --query [].objectId -o tsv)
+az keyvault set-policy --name $KEYVAULT_NAME --secret-permissions get list --object-id $SP_OBJECT_ID
+</pre>
+
+<h1 id="section5">Key Vaults</h1> <a href="#toc">Top</a>
+<p>Create a Key Vault and add a secret</p>
+<pre>
+KEYVAULT_NAME={{ page.keyvault }}
+
+az keyvault create --name $KEYVAULT_NAME --resource-group $RESOURCE_GROUP_NAME --location $LOCATION --tags &lt;value&gt;
+
+az keyvault secret set --vault-name $KEYVAULT_NAME --name client-id --value &lt;value&gt;
+</pre>
