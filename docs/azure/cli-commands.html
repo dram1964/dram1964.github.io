@@ -103,16 +103,196 @@ az storage account keys list --account-name $STORAGE_ACCOUNT_NAME
 
 <p>Generate and capture SAS keys to access a storage container</p>
 <pre>
-ACCOUNT_KEY=$(az storage account keys list --resource-group $RESOURCE_GROUP_NAME --account-name $STORAGE_ACCOUNT_NAME --query '[0].value' -o tsv)
+ACCOUNT_KEY=$(az storage account keys list \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --account-name $STORAGE_ACCOUNT_NAME 
+  --query '[0].value' -o tsv)
+
 END_DATE=`date -u -d "1 year" '+%Y-%m-%dT%H:%MZ'`
-SAS_KEY=$(az storage container generate-sas -n $CONTAINER_NAME --account-key $ACCOUNT_KEY --account-name $STORAGE_ACCOUNT_NAME --https-only --permissions dlrw --expiry $END_DATE -o tsv)
+
+SAS_KEY=$(az storage container generate-sas \
+  -n $CONTAINER_NAME \
+  --account-key $ACCOUNT_KEY \
+  --account-name $STORAGE_ACCOUNT_NAME \
+  --https-only \
+  --permissions dlrw \
+  --expiry $END_DATE -o tsv)
 </pre>
 
 
 <h1 id="section3">Deploying ARM Templates</h1> <a href="#toc">Top</a>
 <p>Deploy infrastructure from an ARM Template:</p>
 <pre>
-az group deployment create --resource-group {{ page.resgroup }} --template-file "/path/to/template.json" --parameters "/path/to/parameters.json" --mode [Incremental | Complete]
+RESOURCE_GROUP={{ page.resgroup }}
+TEMPLATE_FILE=/path/to/template.json
+
+az group deployment create \
+  --name blanktemplate \
+  --resource-group $RESOURCE_GROUP \
+  --template-file $TEMPLATE_FILE
+</pre>
+<p>You can start with a blank template:</p>
+<pre>
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {},
+  "functions": [],
+  "variables": {},
+  "resources": [],
+  "outputs": {}
+}
+</pre>
+<p>You can then add resources as you expand the deployment. For instance to add a storage account, 
+add a storage account resource to the template:</p>
+<pre>
+"resources": [{
+    "name": "learn132uksstorage",
+    "type": "Microsoft.Storage/storageAccounts",
+    "apiVersion": "2021-04-01",
+    "tags": {
+        "displayName": "learn132uksstorage"
+    },
+    "location": "[resourceGroup().location]",
+    "kind": "StorageV2",
+    "sku": {
+        "name": "Standard_LRS",
+        "tier": "Standard"
+    }
+    "properties": {
+        "supportsHttpsTrafficOnly": true
+    }
+}],
+</pre>
+<p>Then you can create a new deployment using:</p>
+<pre>
+templateFile="azuredeploy.json"
+today=$(date +"%d-%b-%Y")
+DeploymentName="addstorage-"$today
+
+az deployment group create \
+  --name $DeploymentName \
+  --resource-group $RESOURCE_GROUP \
+  --template-file $templateFile
+</pre>
+<p>You can make your template re-useable by using parameters instead of hard-coded values. For instance,
+to use a parameter to specify the Storage Account type, add the following parameter to the parameters
+section:</p>
+<pre>
+"parameters":{
+  "storageAccountType": {
+    "type": "string",
+    "defaultValue": "Standard_LRS",
+    "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS",
+        "Premium_LRS"
+    ],
+    "metadata": {
+    "description": "Storage Account type"
+    }
+  },
+}
+</pre>
+<p>Then replace the hard-coded value for the Storage Account type:</p>
+<pre>
+"resources": [{
+    "name": "learn132uksstorage",
+    "type": "Microsoft.Storage/storageAccounts",
+    "apiVersion": "2021-04-01",
+    "tags": {
+        "displayName": "learn132uksstorage"
+    },
+    "location": "[resourceGroup().location]",
+    "kind": "StorageV2",
+    "sku": {
+        "name": "[parameters('storageAccountType')]"
+    }
+    "properties": {
+        "supportsHttpsTrafficOnly": true
+    }
+}],
+</pre>
+<p>When you deploy the template, you can give a value for the parameter, otherwise the default value
+is used:</p>
+<pre>
+templateFile="azuredeploy.json"
+today=$(date +"%d-%b-%Y")
+DeploymentName="use-stg-parameter-"$today
+
+az deployment group create \
+  --name $DeploymentName \
+  --resource-group $RESOURCE_GROUP \
+  --template-file $templateFile
+  --parameters storageAccountType=Standard_LRS
+</pre>
+<p>Template deployments also allow you to specify outputs that will be returned after a successful 
+deployment. The reference() function can be used to retrieve the runtime state of the resource:</p>
+<pre>
+"outputs": {
+  "storageEndpoint": {
+    "type": "object",
+    "value": "[reference('learntemplatestorage123').primaryEndpoints]"
+  }
+}
+</pre>
+<p>We can also add a parameter for the Storage Account Name, and additionally specify allowed values for
+any of our parameters. A completed ARM template could now look something like this:</p>
+<pre>
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "storageName": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 24,
+        "metadata": {
+          "description": "The name of the Azure storage resource"
+        }
+      },
+      // This is the allowed values for an Azure Storage account
+      "storageSKU": {
+          "type": "string",
+          "defaultValue": "Standard_LRS",
+          "allowedValues": [
+              "Standard_LRS",
+              "Standard_GRS",
+              "Standard_RAGRS",
+              "Standard_ZRS",
+              "Premium_LRS",
+              "Standard_GZRS",
+              "Standard_RAGZRS"
+          ],
+          "metadata": {
+              "description": "Allowed SKUs for Storage Accounts"
+          }
+      }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [{
+        "name": "[parameters('storageName')]",
+        "type": "Microsoft.Storage/storageAccounts",
+        "apiVersion": "2021-04-01",
+        "tags": {
+            "displayName": "[parameters('storageName')]"
+        },
+        "location": "[resourceGroup().location]",
+        "kind": "StorageV2",
+        "sku": {
+            "name": "[parameters('storageSKU')]",
+            "tier": "Standard"
+        }
+    }],
+    "outputs": {
+        "storageEndpoint": {
+            "type": "object",
+            "value": "[reference(parameters('storageName')).primaryEndpoints]"
+        }
+    }
+}
 </pre>
 
 <h1 id="section4">Service Principals</h1>
