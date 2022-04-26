@@ -20,6 +20,7 @@ keyvault: "&lt;<i>keyvault_name</i>&gt;"
   <li><a href="#section3">Deploying ARM Templates</a></li>
   <li><a href="#section4">Service Principals</a></li>
   <li><a href="#section5">Key Vaults</a></li>
+  <li><a href="#section6">Configure Defaults</a></li>
 </ul>
 </div>
 
@@ -313,3 +314,12 @@ az keyvault create --name $KEYVAULT_NAME --resource-group $RESOURCE_GROUP_NAME -
 
 az keyvault secret set --vault-name $KEYVAULT_NAME --name client-id --value &lt;value&gt;
 </pre>
+
+<h1 id="section6">Configure Defaults</h1> <a href="#toc">Top</a>
+<p>The <code>az configure</code> command can be used to set and unset default parameter values. To set
+a default resource group for each <code>az</code> command use:</p>
+<pre>az configure --defaults group=my_resource_group</pre>
+<p>To unset the default use:</p>
+<pre>az configure --defaults group=''</pre>
+<p>To list current defaults use:</p>
+<pre>az configure --list-defaults</pre>

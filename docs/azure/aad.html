@@ -1,0 +1,80 @@
+---
+layout: page
+title: "Azure Active Directory"
+permalink: /azure/aad
+---
+
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">AAD Features</a></li>
+  <li><a href="#section2">Azure AD Join</a></li>
+  <li><a href="#section3">Users and Groups</a></li>
+  <li><a href="#section4">Service Principals</a></li>
+  <li><a href="#section5">Key Vaults</a></li>
+  <li><a href="#section6">Configure Defaults</a></li>
+</ul>
+</div>
+
+<h1 id="section1">AAD Features</h1> <a href="#toc">Top</a>
+<p>Azure Active Directory is Microsoft's multi-tenant cloud-based directory and identity 
+management service. AAD is used by Azure, Microsoft 365, Microsoft Intune and Microsoft Dynamics 365.
+When a company purchases one of these services they are assigned a default directory. The default
+directory will hold the users and groups with access to the services purchased. The Tenant refers to 
+the organisation and the default directory assigned to it. Subscriptions are both a billing entity
+and a security boundary. Each subscription has a single account owner and is associated with a single 
+AAD, although a single AAD instance may be used for many subscriptions.</p>
+<p>Management Groups help you manage access, policy and compliance by grouping multiple subscriptions
+together.</p>
+<p>AAD provides a secure SSO to cloud and on-premises applicatons. On-premises 
+directories can be connected to AAD. Self-service password resets available.</p>
+<p>Tenants and AAD are closely linked: a Tenant is a single instance of AAD representing a single organisation.</p>
+<p>Active Directory Domain Services (AD DS) is the deployment of Windows Server-based Active Directory
+on a physical or virtual server. Windows Active Directory is a suite of technologies. Apart from 
+Directory Services, it also includes:</p>
+<ul>
+  <li>Certificate Services (AD CS)</li>
+  <li>Lightweight Directory Services (AD LDS)</li>
+  <li>Federation Services (AD FS)</li>
+  <li>Rights Management Services (AD RMS)</li>
+</ul>
+<p>Using AAD is different from deploying an AD domain controller and adding it to your on-premises 
+domain. AAD is primarilly an identity solution and is designed for internet-based applications. AAD 
+cannot be queried using LDAP: instead AAD provides a REST API over http/https. AAD does not use 
+Kerberos for authentication: instead it uses protocols such as SAML, WS-Federation, OpenID Connect for 
+authentication and OAuth for authorisation. Federation Services allow use of third-party authentication
+services. There are no OUs or GPOs in AAD.</p>
+<p>Azure Active Directory comes in four editions:</p>
+<ol>
+  <li>Free: User and Group management for up to 500,000 objects, SSO for Azure and Microsoft 365, Identity and Access Management, B2B Collaboration, on-prem directory synchronisation.</li>
+  <li> Microsoft 365 Apps: adds IAM for Microsoft 365, MFA, group access management and self-service password reset for cloud users.</li>
+  <li>Premium P1: adds Premium features, Hybrid Identities allowing users to access cloud or on-prem resources, Advanced Group Management (dynamic groups, self-service group management), Conditional Access, self-service password resets for on-prem users</li>
+  <li>Premium P2: adds Identity Protection and Identity Governance</li>
+</ol>
+<p>Azure Administrators can always reset their passwords</p>
+
+<h1 id="section2">Azure AD Join</h1> <a href="#toc">Top</a>
+<p>Azure AD Join allows you to join devices directly to Azure AD without the need to join to an 
+on-prem AD. It provides SSO, Enterprise state roaming across joined devices, access to an inventory
+of pre-approved applications (Microsoft Store for Business), access to on-prem resources when the 
+device also has access to on-prem domain controllers. Devices can be either registered (provided 
+with an identity in AAD) or joined (provides an identity and allows sign-in to the device 
+using an organisational identity). Azure AD Join is intended for organisations that do not 
+have an on-prem AD.</p>
+
+<h1 id="section3">Users and Groups</h1> <a href="#toc">Top</a>
+<p>AAD defines users in three ways:</p>
+<ul>
+  <li>Cloud Identities: users defined in AAD only</li>
+  <li>Directory-synchronised Identities: defined in an on-prem AD.</li>
+  <li>Guest Users: accounts defined in other cloud providers</li>
+</ul>
+<p>The <b>bulk create</b> option in the Azure Portal allows you to download a CSV template to use 
+to add users in bulk.</p>
+<p>Security groups can be assigned access to resources, and any members of the group will also 
+inherit those permissions. Users can be assigned directly to the group or membership rules can be
+defined so that users are assigned or removed from the group (dynamic user) or devices can be
+assigned or removed from the group (dynamic device).</p>
+<p>Administrative units can be defined in AAD and an administrative role can be created with 
+administrator rights on the adminstrative unit. Individual users within the administrative unit
+can then be assigned the adminstrative role to manage membership of the unit</p>
