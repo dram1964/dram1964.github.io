@@ -1,0 +1,71 @@
+---
+layout: page
+title: "GitHub Actions"
+permalink: /git/github-actions
+---
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">GitHub Action Components</a></li>
+  <li><a href="#section2">Example Workflow Definition</a></li>
+  <li><a href="#section3">Viewing Changes</a></li>
+  <li><a href="#section4">Working with Remotes</a></li>
+  <li><a href="#section5">Tagging</a></li>
+  <li><a href="#section6">Branches</a></li>
+  <li><a href="#section7">Rebasing</a></li>
+</ul>
+</div>
+
+
+<p><cite><a href="https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions">GitHub Actions</a></cite> are the CI/CD 
+platform for GitHub repositories, that allow you to trigger workflows 
+in response to events in your repositories.</p>
+
+<h1 id="section1">GitHub Action Components</h1> <a href="#toc">Top</a>
+<dl>
+  <dt>Workflows</dt>
+  <dd>A workflow is a configurable automated process that will run one or more jobs. Workflows are defined in YAML files stored in the <code>.github/workflows</code> directory</dd>
+  <dt>Events</dt>
+  <dd>Events are specific activities in the repository that can trigger a workflow. These include: <ol><li>pull requests</li><li>opening an issue</li><li>commits</li></ol></dd>
+  <dt>Jobs</dt>
+  <dd>A Job is a set of steps in a workflow that execute on the same runner. Each step is either a <b>shell script</b> or an <b>action</b></dd>
+  <dt>Actions</dt>
+  <dd>An action is a custom application for GitHub Actions platform that performs a complex, repeatable task. The action can be defined in one of <ol><li>a public repository</li><li>the same repository as the workflow file</li><li>a published Docker container image</li></ol></dd>
+  <dt>Runners</dt>
+  <dd>A runner is a server used to run workflows. Each runner can run a single job at a time</dd>
+</dl>
+
+<h1 id="section2">Example Workflow Definition</h1> <a href="#toc">Top</a>
+<p>Workflows are defined in YAML files</p>
+<pre><code>
+name: my-github-workflow
+
+on: # define Events that will trigger the workflow
+  push:
+    branches: [main, develop, release]
+  schedule:
+    # 1am each night
+    - cron: "0 1 * * *"
+
+jobs: 
+  run-first-job:
+    name: Run the first job
+    runs-on: ubuntu:latest  
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Node
+        uses: actions/setupnode@v3
+        with:
+          node-version: '14'
+      - name: Run the Hello World Action
+        uses: ./.github/actions/hello-world-action
+        with:
+          username: "John Doe"
+        secrets:
+          password: $&#123;&#123; secrets.JOHN_PASSWD &#125;&#125;
+      - name: Salutation
+        run: |
+        echo "Thanks for running the workflow"
+</code></pre>

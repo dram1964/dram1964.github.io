@@ -114,7 +114,7 @@ output "region" {
 example, to retrieve secrets from a keyvault, the following data blocks can 
 be used:</p>
 <pre>
-data "azurerm_key_value" "projectkv" {
+data "azurerm_key_vault" "projectkv" {
   name = var.keyvault_name
   resource_group_name = var.keyvault_rg
 }
