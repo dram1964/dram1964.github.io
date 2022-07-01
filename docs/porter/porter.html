@@ -1,0 +1,107 @@
+---
+layout: page
+title: "Porter"
+permalink: /porter/porter
+---
+
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">Intro</a></li>
+  <li><a href="#section2">Parameters</a></li>
+  <li><a href="#section3">Credentials</a></li>
+</ul>
+</div>
+
+<h1 id="section1">Intro</h1> <a href="#toc">Top</a>
+<p>A CNAB bundle is made up of three components:</p>
+<ol>
+  <li>Application Images - typically docker images for your application</li>
+  <li>Invocation Images - installer for the application</li>
+  <li>Bundle Descriptor - metadata for the bundle: name, version, parameters, credentials, outputs</li>
+</ol>
+<p>The CNAB bundle therefore allows you to package your application with everything needed to install it.</p>
+<p>Docker is used to package up the bundle</p>
+
+<p><a href="https://cdn.porter.sh/mixins/atom.xml" target="#">Mixins</a> allow porter to work with additional tools such as Terraform, Azure, Kubernetes or Helm. The 'exec' mixin can be used to run custom scripts from a shell. Mixins are installed with:</p>
+<pre><code>
+porter mixin install &lt;mixin_name&gt;
+</code></pre>
+<p>You can begin to configure your Manifest using the <code>porter create</code> command. This will create a cnab directory and porter.yaml file in the current directory</p>
+<p>Once the Manifest is configured the <code>porter build</code> command is used to build the bundle. Metadata is used to build the Bundle Descriptor. The Invocation image is built from the Steps defined in the Manifest. Runtimes are added based on 
+specified mixins. Once the bundle is built it can be published to any OCI registry, 
+e.g. dockerhub or ACR. </p>
+
+<p><a href="https://cdn.porter.sh/plugins/atom.xml" target="#">Plugins</a> are installed with:</p>
+<pre><code>
+porter plugin install &lt;mixin_name&gt;
+</code></pre>
+
+<p>View information about a bundle with <code>porter explain</code>:</p>
+<pre><code>
+porter explain --reference getporter/porter-hello:v0.1.0
+</code></pre>
+
+<p>To install the bundle use <code>porter install</code>:</p>
+<pre><code>
+porter install porter-hello --reference getporter/porter-hello:v0.1.0
+</code></pre>
+
+<p>List bundle installations with <code>porter list</code>. To see information
+about an installation use <code>porter show</code>:</p>
+<pre><code>
+porter show porter-hello
+</code></pre>
+
+<p>You can upgrade an installation using <code>porter upgrade</code>:</p>
+<pre><code>
+porter upgrade porter-hello --reference getporter/porter-hello:v0.1.1
+</code></pre>
+
+<p>To clean up the resources installed from the bundle use <code>porter uninstall</code>:</p>
+<pre><code>
+porter uninstall porter-hello
+</code></pre>
+
+<h1 id="section2">Parameters</h1> <a href="#toc">Top</a>
+<p>Bundles can be authored to accept parameters, allowing the installation to 
+be customised. Use <code>porter explain</code> to review a bundles parameters. 
+Explain will also tell which Actions the parameter can be used in (e.g. install, 
+upgrade or uninstall). If the bundle has custom actions defined, explain will 
+also indicate if the parameter can be used with those Actions also.</p>
+<p>Parameters are specified using the <code>--param</code> switch:</p>
+<pre><code>
+porter install --reference getporter/hello-llama:v0.1.1 --param name="Larry"
+</code></pre>
+<p>For more complicated or sensitive bundles, parameter sets can be defined to 
+provide the parameter values more securely and consistently. The 
+<code>porter parameters generate</code> command can be used to create a 
+parrameter set:</p>
+<pre><code>
+porter parameters generate hello-llama --reference getporter/hello-llama:v0.1.1
+</code></pre>
+<p>The parameter set can be viewed with <code>porter parameters show</code>:</p>
+<pre><code>
+porter parameters show hello-llama
+</code></pre>
+<p>The parameter set can be specified with the <code>parameter-set</code> switch:</p>
+<pre><code>
+porter upgrade hello-llama --parameter-set hello-llama
+</code></pre>
+
+<h1 id="section3">Credentials</h1> <a href="#toc">Top</a>
+<p>Credentials are used by individuals to identify themselves and execute 
+bundles with their associated permissions. Unlike sensitive parameters, credentials
+are not stored by porter and never reused by subsequent actions. Generate 
+credentials with <code>porter credentials generate</code>:</p>
+<pre><code>
+porter credentials generate github --reference getporter/credentials-tutorial:v0.1.0
+</code></pre>
+<p>Use <code>list</code> or <code>show</code> to see the credentials defined on 
+your workstation</p>
+<p>The credential set can be used with the <code>--cred</code> parameter:</p>
+<pre><code>
+porter install --cred github --reference getporter/credentials-tutorial:v0.1.0
+</code></pre>
+<p><strong>Credentials and Sensitive Parameters should be stored in key vault 
+rather than environment variables or local files</strong></p>
