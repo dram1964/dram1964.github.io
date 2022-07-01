@@ -1,0 +1,32 @@
+---
+layout: page
+title: "Linux Command Reference"
+permalink: /linux/commands
+---
+
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">WiFi Commands</a></li>
+</ul>
+</div>
+
+<h1 id="section1">WiFi Commands</h1> <a href="#toc">Top</a>
+<p>The <code>lshw</code> command can be used to quickly identify network hardware on your device:</p>
+<pre><code>
+sudo lshw -C network
+</code></pre>
+<p>The output will include both MAC address in the 'serial' field and IP address in the 'configuration' 
+field, along with other information such as the 'logical name' and the 'bus id'. <code>ifconfig</code> 
+will also provide the MAC and IP addresses for connect wireless adapters. Use <code>iwconfig</code> 
+to see the speed and link quality for your wireless adapter</p>
+<p>The <code>nmcli</code> command provides useful information from Network Manager. To see the saved 
+connections for your device use:</p>
+<pre><code>
+nmcli connection show
+</code></pre>
+<p>To see a list of Access Points and stats on their signal strength and capabilities, use:</p>
+<pre><code>
+nmcli dev wifi
+</code></pre>
+<p><code>wavemon</code> is an ncurses-based monitoring tool for WiFi</p>
