@@ -1,0 +1,432 @@
+---
+layout: page
+title: "Azure Fundamentals"
+permalink: /azure/afc
+---
+
+<div id="toc">
+<h1 >Contents</h1>
+<ul>
+  <li><a href="#section1">Core Concepts</a></li>
+  <li><a href="#section2">Core Services</a></li>
+  <li><a href="#section3">Core Management Tools</a></li>
+  <li><a href="#section4">Service Principals</a></li>
+  <li><a href="#section5">Key Vaults</a></li>
+  <li><a href="#section6">Configure Defaults</a></li>
+</ul>
+</div>
+
+<p>Notes for the Azure Fundamentals Certification</p>
+<p>Continue <a href="https://docs.microsoft.com/en-us/learn/modules/azure-devops-devtest-labs/" target="#">here</a></p>
+
+<h1 id="section1">Core Concepts</h1> <a href="#toc">Top</a>
+<p>Cloud Computing - delivery of computing services over the internet</p>
+<ul>
+  <li>pay-as-you-go pricing model
+    <ul>
+      <li>lower operating costs</li>
+      <li>run infrastructure more efficiently</li>
+      <li>scale as need changes</li>
+    </ul>
+  </li>
+  <li>deliver new features faster</li>
+  <li>Azure Portal
+    <ul>
+      <li>designed for resilience and availability</li>
+      <li>available in every Azure Datacentre</li>
+      <li>Continuously updated</li>
+    </ul>
+  </li>
+  <li>Azure Marketplace
+    <ul>
+      <li>access to solutions from independant providers and MS partners</li>
+      <li>all solutions certified to run on Azure</li>
+    </ul>
+  </li>
+  <li>Azure Free Account
+    <ul>
+      <li>free access for 12 months</li>
+      <li>credit to spend for first 30 days</li>
+      <li>25 always-free products</li>
+      <li>requires credit card and MS or Github account</li>
+    </ul>
+  </li>
+  <li>Azure Free Student Account
+    <ul>
+      <li>free access for 12 months</li>
+      <li>$100 credit to spend for first 12 monts</li>
+      <li>free access to certain software developer tools</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="section2">Core Services</h1> <a href="#toc">Top</a>
+<h2>Compute</h2>
+<ul>
+  <li>Virtual Machines</li>
+  <li>Virtual Machine Scale Sets - deploy and manage a set of identical, load-balanced VMs</li>
+  <li>Azure Kubernetes Service</li>
+  <li>Azure Service Fabric</li>
+  <li>Azure Batch - large-scale, high-performance batch jobs
+    <ul>
+      <li>Starts pool of compute VMs</li>
+      <li>Installs applications and data</li>
+      <li>Runs jobs</li>
+      <li>Identifies failures</li>
+      <li>Requeues work</li>
+      <li>Scales down as work completes</li>
+    </ul>
+  </li>
+  <li>Azure Container Instances - PaaS service to run your container instances</li>
+  <li>Azure Functions - serverless compute
+    <ul>
+      <li>Event-driven execution of code: REST request, timer or message from another application</li>
+      <li>Intended for code that can be executed in seconds</li>
+      <li>Coding support for C#, Python, JavaScript, Typescript, Java and Powershell</li>
+      <li>Automatic scaling to meet demand</li>
+      <li>Stateless environment</li>
+      <li>Durable Functions allow Functions to be chained together whilst maintaining state</li>
+      <li>Functions allow developers to focus on the code, without worrying about the underlying infrastructure</li>
+    </ul>
+  </li>
+  <li>Azure Logic Apps - serverless orchestration
+    <ul>
+      <li>Low Code or No Code development platform</li>
+      <li>Used to automate and orchestrate tasks, business processes and workflows</li>
+      <li>Integration solution for apps, data and systems</li>
+      <li>Web-based designer</li>
+      <li>Apps are triggered by other Azure services using connectors</li>
+      <li>Gallery includes over 200 connectors</li>
+    </ul>
+  </li>
+  <li>Azure Virtual Desktop - use cloud-hosted versions of Windows from any location
+    <ul>
+      <li>User profiles containerised using FSLogix</li>
+      <li>Enable MFA</li>
+      <li>Multi-session Windows 10 deployment</li>
+      <li>Bring your own licences</li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Networking</h2>
+<ul>
+  <li>Azure Virtual Network
+    <ul>
+      <li>Isolation and Segmentation - private IP address space using public or private IP address ranges. Public IP address are not internet routable</li>
+      <li>Internet communication - VMs can connect to the internet by default. To connect to the VM from the internet you can assig a Public IP address or putting the VM behind a public load balancer</li>
+      <li>Communication between Azure resources - some services (VMs, App Services, AKS, VMSS) can communicate via the Virtual Network. Other services (CosmosDB, Service Bus, Key Vault, Storage Accounts, Azure SQL Db) require Service Endpoints</li>
+      <li>Communication with On-Prem Services
+        <ul>
+          <li>Point-to-Site VPN</li>
+          <li>Site-to-Site VPN - link on-prem VPN Gateway to to the Azure VPN Gateway </li>
+          <li>Azure ExpressRoute - dedicated, private connectivity that doesn't travel over the internet</li>
+        </ul>
+      </li>
+      <li>Route Network Traffic - Azure routes traffic between subnets on any connected Virtual Network, On-Prem networks and the Internet. Route tables can be used to control routing between subnets. BGP routes can be propagated from on-prem routers to Azure VPN gateways, Azure Route Server and ExpressRoute</li>
+      <li>Connect Virtual Networks - Vitual Network Peering allows you to connect virtual networks together. User-defined Routes allow for tighter control of routing between subnets and VNets</li>
+      <li>Address Space - the address space for each VNet needs to be unique in your subscription and for any other network that you wish to connect to</li>
+      <li>NAT Gateway - you can configure a subnet to use a static outbound IP address when accessing the internet</li>
+      <li>Bastion Host - can be enabled for the VNet</li>
+      <li>DDoS Protection - can be enabled for the VNet</li>
+      <li>Firewall - can be enabled for the VNet</li>
+      <li>NSGs - can be associated with each subnet in the VNet</li>
+      <li>Route Table - default route tables are created for each subnet in the VNet. Route tables can be added to customise routing</li>
+      <li>Subnet Delegation - designate a subnet to be used for a dedicated service</li>
+    </ul>
+  <li>Azure Load Balancer</li>
+  <li>Azure Application Gateway</li>
+  <li>Azure VPN Gateway
+    <ul>
+      <li>Connect two trusted private networks using an encrypted tunnel over a public, untrusted network</li>
+      <li>Deployed in a dedicated subnet of the VNet</li>
+      <li>Only one VPN Gateway allowed per VNet</li>
+      <li>Use a pre-shared key for authentication</li>
+      <li>Internet Key Exchange (IKE) is used to set up a security association (an agreement of the encryption) between two endpoints</li>
+      <li>IPSec suite used to encrypt/decrypt data based on the security association</li>
+      <li>VPN is either:
+        <ol>
+          <li>Policy-based
+            <ul>
+              <li>Specifies static IP address for encryption through the tunnel</li>
+              <li>supports IKEv1 only</li>
+              <li>relies on static route definitions</li>
+              <li>primarily used where legacy on-prem VPN devices require them</li>
+            </ul>
+          </li>
+          <li>Route-based
+            <ul>
+              <li>IPSec tunnel modelled as a network interface or vitual tunnel interface</li>
+              <li>IP routing decides whether to use IPSec tunnel</li>
+              <li>supports IKEv2</li>
+              <li>Can use dynamic routing protocols</li>
+              <li>more resilient to creation of new subnets</li>
+            </ul>
+          </li>
+        </ol>
+      </li>
+      <li>Deploy VPN Gateway
+        <ul>
+          <li>GatewaySubnet - add a subnet called <strong>GatewaySubnet</strong> to the VNet with a netmask of at least /27</li>
+          <li>Public IP address - Basic SKU Public IP needed as target for on-prem VPN device</li>
+          <li>Local network gateway - defines the on-prem network configuration</li>
+          <li>Virtual Network Gateway - routes traffic between the VNet and on-prem network</li>
+          <li>Connection - logical connection between VPN gateway and on-prem network</li>
+        </ul>
+      </li>
+      <li>Availability - VPN gateways are, by default, configured in an active/standby configuration. With BGP routing, active/active configurations are available, allowing connections to multiple on-prem VPN devices. VPN gateways can also be used for ExpressRoute failover or in Zone-redundant configuration.</li>
+    </ul>
+  </li>
+  <li>Azure DNS</li>
+  <li>Azure Content Delivery Network</li>
+  <li>Azure DDoS Protection</li>
+  <li>Azure Traffic Manager</li>
+  <li>Azure ExpressRoute
+    <ul>
+      <li>extends on-prem network into Azure via a connectivity provider</li>
+      <li>connections don't go over the public internet</li>
+      <li>connection is private but not encrypted</li>
+      <li>Layer 3 connectivity (IP Address)</li>
+      <li>Dynamic Routing</li>
+      <li>Connection methods
+        <ul>
+          <li>Colocation at a cloud exchange</li>
+          <li>Point-to-point connections between on-prem and Azure</li>
+          <li>Any-to-any connections - integrates Azure to your WAN connection</li>
+          <li>Directly from ExpressRoute sites</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Azure Network Watcher</li>
+  <li>Azure Firewall</li>
+  <li>Azure Virtual WAN</li>
+</ul>
+
+<h2>Storage</h2>
+<p>Azure storage provides a unique namespace for your data, accessible over HTTP or HTTPS. Data is durable, secure, scalable, managed, accessible.</p>
+<ul>
+  <li>Azure Blob Storage: Unstructured data - can hold any type of data. Blobs are stored in Containers, which act like folders to organise the blob storage.</li>
+  <ul>
+    <li>Ideal for:
+      <ul>
+        <li>serving images/files to a browser</li>
+        <li>storing files for distributed access</li>
+        <li>streaming video/audio</li>
+        <li>storing backups</li>
+        <li>storing data for analysis</li>
+        <li>storing up to 8TB of data for VMs</li>
+      </ul>
+    </li>
+    <li>Blob Storage offers three access tiers to make storage more cost effective:
+      <ul>
+        <li>Hot - optimised for data that is accessed frequently</li>
+        <li>Cool - accessed infrequently, higher access costs and lower storage costs than hot tier</li>
+        <li>Archive - rarely accessed, stored for at least 180 days</li>
+      </ul>
+    </li>
+    <li>Access tier can be set at blob level, during or after upload. Lifecycle Management on the Storage Account allows you to configure rules to transition blobs between tiers.</li>
+  </ul>
+  <li>Azure File Storage: provides cloud-hosted file shares. Files can be accessed using SMB or NFS. Can be accessed from on-prem or VMs in Azure. Files are encrypted at rest, and SMB ensures that it is encrypted in transit. Files can be access using a URL or SAS URL token. Ideal for:
+    <ul>
+      <li>Applications that use file shares</li>
+      <li>Sharing files between VMs or Users</li>
+    </ul>
+  </li>
+  <li>Azure Queue Storage</li>
+  <li>Azure Table Storage</li>
+</ul>
+
+<h2>Mobile - create backend services for iOS, Android and Windows apps</h2>
+
+<h2>Databases</h2>
+<ul>
+  <li>Azure Cosmos DB
+    <ul>
+      <li>globally distributed</li>
+      <li>multi-model support</li>
+      <li>supports schema-less data</li>
+      <li>stores data in Atom-Record-Sequence (ARS)</li>
+      <li>data is then projected as an API. APIs include:
+        <ul>
+          <li>SQL</li>
+          <li>MongoDB</li>
+          <li>Cassandra</li>
+          <li>Tables</li>
+          <li>Gremlin</li>
+        </ul>
+      <li>
+    </ul>
+  </li>
+  <li>Azure SQL Database
+    <ul>
+      <li>Fully-managed PaaS offering - including upgrades, patching, backups and monitoring</li>
+      <li>Based on latest version of Microsoft SQL Server database engine</li>
+      <li>99.99% availability</li>
+      <li>support for relational and non-relational data including: graphs, JSON, spatial and XML data</li>
+      <li>Use Azure Database Migration Service to migrate on-prem SQL Servers to Azure SQL Database</li>
+      <li>Use the Microsoft Database Migration Assistant to generate a report to guide the migration process</li>
+      <li>Only provides a single collation option</li>
+    </ul>
+  </li>
+  <li>Azure Database for MySQL
+    <ul>
+      <li>Based on MySQL CE, versions 5.6, 5.7 and 8.0</li>
+      <li>99.99% availability</li>
+      <li>Built-in security, fault-tolerance and data protection</li>
+      <li>Automatic backups: Point-in-time restore up to 35 days previous</li>
+      <li>Use Azure Database Migration Service to migrate on-prem MySQL Servers to Azure Database for MySQL</li>
+      <li>Various service tiers available</li>
+    </ul>
+  </li>
+  <li>Azure Database for PostgreSQL
+    <ul>
+      <li>Based on the open-source PostgreSQL database engine</li>
+      <li>Built-in high-availability</li>
+      <li>Various service tiers available</li>
+      <li>Automatic backups: Point-in-time restore up to 35 days previous</li>
+      <li>Encryption at rest and in-transit</li>
+      <li>Dynamic scalability</li>
+      <li>Available in Single Server or Hyperscale (Citus) editions</li>
+      <li>Hyperscale offers horizontal scaling across multiple machines using sharding</li>
+    </ul>
+  </li>
+  <li>SQL Server Managed Instance
+    <ul>
+      <li>PaaS offering, similar to Azure SQL Database but with support for more features: 
+        <ul>
+          <li>see <a href="https://docs.microsoft.com/en-us/azure/azure-sql/database/features-comparison?view=azuresql" target="#">feature comparison</a></li>
+          <li>additional collations</li>
+          <li>SQL Server Agent available</li>
+          <li>Supports more functions, procedures, statements</li>
+          <li>Time Zone choice</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Azure Database Migration Service - manage migrations to cloud</li>
+  <li>Azure Cache for Redis</li>
+  <li>Azure Database for MariaDB</li>
+</ul>
+
+<h2>Web</h2>
+        <ul>
+          <li>Azure App Service - PaaS offering to deploy front-end web applications
+          <ul>
+            <li>App Service plan determines how much resource is allocated</li>
+            <li>Built-in load-balancer and traffic manager</li>
+            <li>Supports Web Apps, API Apps, WebJobs and Mobile Apps</li>
+          </ul>
+          </li>
+          <li>Azure Notification Hubs - push notifications to any platform from any back end</li>
+          <li>Azure API Managment - publish APIs</li>
+          <li>Azure Cognitive Search - search as a service</li>
+          <li>Web Apps feature of Azure App Service</li>
+          <li>Azure SignalR Service</li>
+        </ul>
+
+<h2>IoT</h2>
+<p>Devices equipped with sensors can send data over the internet to an Azure endpoint.
+Message data can then be analysed. Additionally software updates can be sent to devices 
+from Azure.</p>
+<ul>
+  <li>IoT Hub - messaging Hub for secure, bi-directional communications for devices, to monitor, collect data, update software and control the device.</li>
+  <li>IoT Central - IoT SaaS solution. Builds on IoT Hub by providing a dashboard to connect, monitor and manage IoT devices. Starter templates are available for various common scenarios. Device developers need to create code to run on the devices that match the chosen template.</li>
+  <li>Azure Sphere is an end-to-end IoT solution covering everything from the hardware used to message handling. There are three key components:
+    <ul>
+      <li>Azure Sphere micro-controller unit, responsible for processing the signals from the sensors</li>
+      <li>Customised Linux OS used to run the vendors software</li>
+      <li>Azure Sphere Security Service (AS3) for authenticating to Azure and establishing a secure connection</li>
+    </ul>
+  </li>
+  <li>Choose Azure Sphere if device security is critical</li>
+</ul>
+
+<h2>Big Data</h2>
+<ul>
+  <li>Azure Synapse Analytics
+    <ul>
+      <li>big-data analytics service</li>
+      <li>fully managed data warehouse</li>
+    </ul>
+  </li>
+  <li>Azure HDInsight
+    <ul>
+      <li>open-source, enterprise-level, big-data analytics service</li>
+      <li>supports a variety of cluster types:
+        <ul>
+          <li><a href="https://docs.microsoft.com/en-us/azure/hdinsight/spark/apache-spark-overview" target="#">Apache Spark</a></li>
+          <li><a href="https://docs.microsoft.com/en-us/azure/hdinsight/hadoop/apache-hadoop-introduction" target="#">Apache Hadoop</a></li>
+          <li><a href="https://docs.microsoft.com/en-us/azure/hdinsight/kafka/apache-kafka-introduction" target="#">Apache Kafka</a></li>
+          <li><a href="https://docs.microsoft.com/en-us/azure/hdinsight/hbase/apache-hbase-overview" target="#">Apache HBase</a></li>
+          <li><a href="https://docs.microsoft.com/en-us/azure/hdinsight/storm/apache-storm-overview" target="#">Apache Storm</a></li>
+          <li>Machine Learning Services</li>
+        </ul>
+      </li>
+      <li>Supports ETL, data warehousing, machine learning and IoT</li>
+    </ul>
+  </li>
+  <li>Azure Databricks
+    <ul>
+      <li>data analytics and AI solution</li>
+      <li>Apache Spark environment supports:
+        <ul>
+          <li>Python, including scikit-learn, TensorFlow, PyTorch</li>
+          <li>Scala</li>
+          <li>R</li>
+          <li>Java</li>
+          <li>SQL</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Azure Data Lake Analytics
+    <ul>
+      <li>on-demand analytics job-service</li>
+    </ul>
+  </li>
+</ul>
+
+<h2>AI</h2>
+<ul>
+  <li>Azure Machine Learning 
+    <ul>
+      <li>A platform for making predictions. With Azure Machine Learning you can:
+        <ul>
+          <li>Obtain data</li>
+          <li>Define how to handle missing or bad data</li>
+          <li>Split data into training and test datasets</li>
+          <li>Deliver data to the training process</li>
+          <li>Train predictive models</li>
+          <li>Create pipelines to schedule compute-intensive experiments to score the predictive models</li>
+          <li>Deploy the best-performing algorithm as an API to an endpoint to be consumed in real-time by other applications</li>
+        </ul>
+      </li>
+      <li>Azure Machine Learning is recommended when you need complete control over the design and training of your algorithm using your own data</li>
+    </ul>
+  </li>
+  <li>Azure ML Studio - collaborative visual workspace</li>
+  <li>Cognitive Services
+    <ul>
+      <li>Pre-built machine learing models, including:
+        <ul>
+          <li>Vision - image processing</li>
+          <li>Speech - text-to-speech and speech-to-text</li>
+          <li>Translator</li>
+          <li>Personaliser - predict user behaviour, offer personalised recommendations</li>
+          <li>Decision support</li>
+          <li>Natural Language Processing</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Azure Bot Service and Bot Framework - create virtual agents that understand and reply to questions. Used for automating repetitive tasks. May rely on other Cognitive services</li>
+</ul>
+
+<h2>DevOps</h2>
+        <ul>
+          <li>Azure DevOps</li>
+          <li>Azure DevTest Labs - create on-demand environments to test/deploy applications from deployment pipelines</li>
+        </ul>
+
+<h1 id="section1">Core Management Tools</h1> <a href="#toc">Top</a>
