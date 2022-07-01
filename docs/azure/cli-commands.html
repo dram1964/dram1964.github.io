@@ -60,6 +60,7 @@ elements up to, but not including, the element at index 4". Three elements (4 - 
 <p>In addition to using array indexing, you can filter the results using filter 
 expressions:</p>
 <pre>
+az account list --query "[?name == 'mySubscription')].{Subscription:id,Name:name}" -o table
 az account list --query "[?contains(name, 'sub')].{Subscription:id,Name:name}" -o table
 </pre>
 <p>So far we've been selecting fields that return a scalar value. However some fields will be dictionaries: use the dot operator to select a single element from each dictionary:</p>
