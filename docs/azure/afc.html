@@ -10,14 +10,14 @@ permalink: /azure/afc
   <li><a href="#section1">Core Concepts</a></li>
   <li><a href="#section2">Core Services</a></li>
   <li><a href="#section3">Core Management Tools</a></li>
-  <li><a href="#section4">Service Principals</a></li>
-  <li><a href="#section5">Key Vaults</a></li>
+  <li><a href="#section4">Security</a></li>
+  <li><a href="#section5">Identity and Governance</a></li>
   <li><a href="#section6">Configure Defaults</a></li>
 </ul>
 </div>
 
 <p>Notes for the Azure Fundamentals Certification</p>
-<p>Continue <a href="https://docs.microsoft.com/en-us/learn/modules/azure-devops-devtest-labs/" target="#">here</a></p>
+<p>Continue <a href="https://docs.microsoft.com/en-us/learn/modules/build-cloud-governance-strategy-azure/" target="#">here</a></p>
 
 <h1 id="section1">Core Concepts</h1> <a href="#toc">Top</a>
 <p>Cloud Computing - delivery of computing services over the internet</p>
@@ -130,12 +130,23 @@ permalink: /azure/afc
       <li>Bastion Host - can be enabled for the VNet</li>
       <li>DDoS Protection - can be enabled for the VNet</li>
       <li>Firewall - can be enabled for the VNet</li>
-      <li>NSGs - can be associated with each subnet in the VNet</li>
+      <li>NSGs
+        <ul>
+          <li>Filter traffic to and from Azure resources within a VNet</li>
+          <li>Can be associated with each subnet in the VNet</li>
+          <li>Use <code>az network nsg list</code> command to list NSGs</li>
+          <li>Use <code>az network nsg rule list</code> to inspect NSG rules</li>
+        </ul>
+      </li>
       <li>Route Table - default route tables are created for each subnet in the VNet. Route tables can be added to customise routing</li>
       <li>Subnet Delegation - designate a subnet to be used for a dedicated service</li>
     </ul>
   <li>Azure Load Balancer</li>
-  <li>Azure Application Gateway</li>
+  <li>Azure Application Gateway
+    <ul>
+      <li>Provides a Web Application Firewall (<strong>WAF</strong>) to protect applications from inbound threats</li>
+    </ul>
+  </li>
   <li>Azure VPN Gateway
     <ul>
       <li>Connect two trusted private networks using an encrypted tunnel over a public, untrusted network</li>
@@ -178,8 +189,17 @@ permalink: /azure/afc
     </ul>
   </li>
   <li>Azure DNS</li>
-  <li>Azure Content Delivery Network</li>
-  <li>Azure DDoS Protection</li>
+  <li>Azure Content Delivery Network
+    <ul>
+      <li>Includes Web Application Firewall (WAF) service</li>
+    </ul>
+  </li>
+  <li>Azure DDoS Protection
+    <ul>
+      <li>Discards DDoS traffic at the Azure network edge</li>  
+      <li>Protects against over-consumption of resources</li>
+    </ul>
+  </li>
   <li>Azure Traffic Manager</li>
   <li>Azure ExpressRoute
     <ul>
@@ -199,7 +219,19 @@ permalink: /azure/afc
     </ul>
   </li>
   <li>Azure Network Watcher</li>
-  <li>Azure Firewall</li>
+  <li>Azure Firewall
+    <ul>
+      <li>Cloud-based network security service that protects your Azure virtual networks</li>
+      <li>Stateful firewall - analyses connection not just individual packets</li>
+      <li>Offers high availability and unlimited scalability</li>
+      <li>Uses a static, public IP for your virtual network resources</li>
+      <li>Integrated with Azure Monitor to enable logging and analytics</li>
+      <li>Inbound and Outbound Filtering rules</li>
+      <li>Application rules - allowed FQDNs that can be accessed from a subnet</li>
+      <li>Inbound Destination Network Address Translation (DNAT)</li>
+      <li>Normally Deployed to a central VNet to control general network access</li>
+    </ul>
+  </li>
   <li>Azure Virtual WAN</li>
 </ul>
 
@@ -424,9 +456,205 @@ from Azure.</p>
 </ul>
 
 <h2>DevOps</h2>
+<ul>
+  <li>Azure DevOps
+    <ul>
+      <li>A suite of services for the software development lifecylcle. Services include:
         <ul>
-          <li>Azure DevOps</li>
-          <li>Azure DevTest Labs - create on-demand environments to test/deploy applications from deployment pipelines</li>
+          <li>Azure Repos - source code repositories</li>
+          <li>Azure Boards - Agile project managment suite</li>
+          <li>Azure Pipelines - a CI/CD pipeline automation tool</li>
+          <li>Azure Artifacts - a repository for artifacts that can be fed into CI/CD and testing pipelines</li>
+          <li>Azure Test Plans - automated test tool</li>
         </ul>
+      </li>
+      <li>DevOps offers a more granular permissions model than GitHub</li>
+      <li>DevOps provides a more sophisticated level of project mananagement and reporting tools</li>
+    </ul>
+  </li>
+  <li>GitHub and GitHub Actions
+    <ul>
+      <li>Git is a decentralised source-code managment tool</li>
+      <li>GitHub is a hosted version of Git. GitHub offers additional functionality:
+        <ul>
+          <li>source code review via comments and questions</li>
+          <li>project managment tools</li>
+          <li>issue tracking</li>
+          <li>CI/CD automation</li>
+          <li>Wiki</li>
+          <li>Run from on the Cloud or on-prem</li>
+        </ul>
+      </li>
+      <li>GitHub supports workflow automation</li>
+      <li>GitHub offers similar tools to DevOps, and is more trusted in the open-source community. DevOps is aimed at enterprise-development, with stronger support for project managment and planning</li>
+      <li>GitHub has limited permissions model over each repository</li>
+    </ul>
+  </li>
+  <li>Azure DevTest Labs
+    <ul>
+      <li>Create on-demand environments to test/deploy applications from deployment pipeline</li>
+      <li>Can be used to deploy any Azure Resource that supports ARM template deployment</li>
+      <li>Automates provisioning and deprovisioning of environments</li>
+    </ul>
+  </li>
+</ul>
 
-<h1 id="section1">Core Management Tools</h1> <a href="#toc">Top</a>
+<h1 id="section3">Core Management Tools</h1> <a href="#toc">Top</a>
+<h2>Resource Management</h2>
+<ul>
+  <li>Azure Portal</li>
+  <li>Azure Mobile App</li>
+  <li>Azure PowerShell</li>
+  <li>Azure CLI</li>
+    <ul>
+      <li>Good for one-off management, administrative or reporting tasks</li>
+    </ul>
+  <li>ARM Templates
+    <ul>
+      <li>Define infrastructure for repeatable deployments</li>
+      <li>Declarative syntax</li>
+      <li>Resource deployments are created in parallel</li>
+      <li>Validation stage checks for dependancies and allows for easier rollback of deployments</li>
+      <li>ARM templates are idempotent</li>
+      <li>Can be used to trigger PowerShell or CLI scripts</li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Resource Monitoring</h2>
+<ul>
+  <li>Azure Advisor
+    <ul>
+      <li>Evaluates your Azure resources and offers recommendations:
+        <ul>
+          <li>reliability</li>
+          <li>security</li>
+          <li>performance</li>
+          <li>operational excellence</li>
+          <li>reduce costs</li>
+        </ul>
+      </li>
+      <li>Recommendations available in the Portal, through the API and via notifications</li>
+    </ul>
+  </li>
+  <li>Azure Monitor
+    <ul>
+      <li>A platform for collecting, analysing, and visualising metric and logging data from Azure and on-prem resources</li>
+      <li>Data collected in central repositories</li>
+      <li>Data can be viewed in Azure Monitor Dashboard or viewed in PowerBi or Kusto queries</li>
+      <li>Can be used to setup custom alerts</li>
+    </ul>
+  </li>
+  <li>Azure Service Health
+    <ul>
+      <li>Free service providing alerts on:
+        <ul>
+          <li>Service Issues</li>
+          <li>Planned Maintenance</li>
+          <li>Health Advisories</li>
+          <li>Root Cause Analysis for outtages</li>
+        </ul>
+      </li>
+      <li>More detailed and tailored information than <a href="https://status.azure.com" target="#">Azure Status</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="section4">Security</h1> <a href="#toc">Top</a>
+<p>A defence-in-depth strategy addresses security at the following layers:
+<ol>
+  <li>Physical Security - protecting access to buildings and hardware</li>
+  <li>Identity and Access - authentication and authorisation controls</li>
+  <li>Perimeter - protecting the network perimeter using DDoS protection and firewalls</li>
+  <li>Network - limiting communication between and to resources</li>
+  <li>Compute - secure access to VMs and endpoints</li>
+  <li>Application - securing applications, remediating vulnerabilities</li>
+  <li>Data - securing access to data</li>
+</ol>
+</p>
+<ul>
+  <li>Azure Security Centre
+    <ul>
+      <li>Monitor security posture for Azure and on-prem resources. Security Posture (<strong>CIA</strong>):
+        <ul>
+          <li>Confidentiality</li>
+          <li>Integrity</li>
+          <li>Availability</li>
+        </ul>
+      </li>
+      <li>Automatically apply security settings to new resources</li>
+      <li>Provides recommendations</li>
+      <li>Continuously monitor and assess vulnerabilities</li>
+      <li>Block malware with machine learning</li>
+      <li>Define rules for allowed applications (adaptive application controls)</li>
+      <li>Threat detection</li>
+      <li>Just-in-time access control for network ports</li>
+      <li>Secure score reflects compliance to assigned governance controls</li>
+      <li>Adaptive network hardening monitors network activity compared to NSGs and makes recommendations</li>
+      <li>File integrity monitoring - monitor important files</li>
+      <li>Use Workflow Automation (Logic Apps) to respond to security alerts</li>
+    </ul>
+  </li>
+  <li>Azure Sentinel
+    <ul>
+      <li>Cloud-based Security Information and Event Management (SIEM)</li>
+      <li>Aggregates security data from many different sources, using open-standard logging format</li>
+      <li>Threat detection uses built-in rules provided as templates or custom rules</li>
+      <li>Threat response can be automated with Azure Monitor Workbooks, to set alerts or send emails. Email will include link to Block or Ignore threat</li>
+      <li>Utilises Microsoft's analytics and threat intelligence</li>
+    </ul>
+  </li>
+  <li>Azure Key Vault
+    <ul>
+      <li>Secure, centralised storage for application secrets</li>
+      <li>Monitor and control access to secrets</li>
+      <li>Simplify management and renewal of certificates</li>
+      <li>Integrates with other Azure services - storage accounts, container registries, event hubs, etc</li>
+    </ul>
+  </li>
+  <li>Azure Dedicated Host
+    <ul>
+      <li>VMs hosted on physical servers that are not shared with other customers</li>
+      <li>Host groups provide for high availability</li>
+    </ul>
+  </li>
+</ul>
+<p>Further Reading:</p>
+<ul>
+  <li><a href="https://docs.microsoft.com/en-us/learn/modules/resolve-threats-with-azure-security-center/" target="#">Resolve Security Threats</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/modules/design-monitoring-strategy-on-azure/" target="#">Security Monitoring Plan</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/modules/manage-secrets-with-azure-key-vault/" target="#">Manage App Secrets</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/modules/configure-and-manage-azure-key-vault" target="#">Manage Key Vault Secrets</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/paths/implement-resource-mgmt-security/" target="#">Implement Resource Management Security</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/paths/secure-your-cloud-data/" target="#">Secure Cloud Data</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/paths/az-400-develop-security-compliance-plan/" target="#">Develop a Security and Compliance Plan</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/paths/manage-security-operations/" target="#">Manage Security Operations in Azure</a></li>
+</ul>
+
+<h1 id="section4">Identity and Governance</h1> <a href="#toc">Top</a>
+
+<h2>Azure AD</h2>
+<p>With Cloud Computing and BYOD, identity is now the primary security boundary. Identity is 
+establish by the exchange of credentials to establish the identity of an agent 
+(authentication). Authorisation is about establishing the levels of access to be granted
+to an authenticated agent.</p>
+<ul>
+  <li>Azure AD is a cloud-based identity and access management service</li>
+  <li>A Tenant is a representation of an organisation. Each Microsoft 365, Office 365, Azure and Dynamics CRM tenant is automatically an Azure tenant</li>
+  <li>Azure AD provides:
+    <ul>
+      <li>Authentication: includes self-service password resets, MFA, smart-lockout, password blacklist</li>
+      <li>SSO</li>
+      <li>Application Management</li>
+      <li>Device Management</li>
+    </ul>
+  <li>Azure AD Connect
+    <ul>
+      <li>Synchronises user identities between on-prem Active Directory and Azure AD</li>
+      <li>Conditional access allows or denies access to resources based on <i>signals</i>: identity, location, service requested or device. Conditional Access requires an Azure AD Premium P1 or P2 licence.
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Governance</h2>
