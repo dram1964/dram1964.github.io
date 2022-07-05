@@ -12,7 +12,7 @@ permalink: /azure/afc
   <li><a href="#section3">Core Management Tools</a></li>
   <li><a href="#section4">Security</a></li>
   <li><a href="#section5">Identity and Governance</a></li>
-  <li><a href="#section6">Configure Defaults</a></li>
+  <li><a href="#section6">Cost Management and SLAs</a></li>
 </ul>
 </div>
 
@@ -631,7 +631,7 @@ from Azure.</p>
   <li><a href="https://docs.microsoft.com/en-us/learn/paths/manage-security-operations/" target="#">Manage Security Operations in Azure</a></li>
 </ul>
 
-<h1 id="section4">Identity and Governance</h1> <a href="#toc">Top</a>
+<h1 id="section5">Identity and Governance</h1> <a href="#toc">Top</a>
 
 <h2>Azure AD</h2>
 <p>With Cloud Computing and BYOD, identity is now the primary security boundary. Identity is 
@@ -658,3 +658,241 @@ to an authenticated agent.</p>
 </ul>
 
 <h2>Governance</h2>
+<p>Governance is the process of establishing and enforcing rules and policies</p>
+<ul>
+  <li>Azure RBAC
+    <ul>
+      <li>Role-Based Access Control</li>
+      <li>Pre-defined roles defining access-levels to resources</li>
+      <li>Uses an allow model: roles define what is <strong>allowed</strong></li>
+      <li>Roles assigned to principals within a scope:
+        <ul>
+          <li>management group</li>
+          <li>subscription</li>
+          <li>resource group</li>
+          <li>resource</li>
+        </ul>
+      </li>
+      <li>Enforced against any action on a resource that is initiated through Resource Manager</li>
+      <li>Does not apply at the application or data levels</li>
+    </ul>
+  </li>
+  <li>Resource Locks
+    <ul>
+      <li>Prevents resources being accidentally deleted</li>
+      <li>Accessible from the 'Locks' pane in the Azure Portal</li>
+      <li>Two lock-types available
+        <ul>
+          <li>CanNotDelete - prevents deletion</li>
+          <li>Read - prevents deletion or modification</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Resource Tags
+    <ul>
+      <li>Provide Metadata about a resource</li>
+      <li>Tags can be used for:
+        <ul>
+          <li>Resource Management</li>
+          <li>Billing and Cost Management</li>
+          <li>Operations Management (SLAs)</li>
+          <li>Security level</li>
+          <li>Governance and Compliance</li>
+          <li>Visualise complex workloads</li>
+        </ul>
+      </li>
+      <li>Azure Policy can be used to force resources to inherit tags from their resource group</li>
+    </ul>
+  </li>
+  <li>Azure Policy
+    <ul>
+      <li>Used to define policies that control or audit your resources</li>
+      <li>Groups of policies are called <strong>initiatives</strong></li>
+      <li>Policy definitions are assigned to a scope:
+        <ul>
+          <li>management group</li>
+          <li>subscription</li>
+          <li>resource group</li>
+        </ul>
+      </li>
+      <li>Policy assignments are inherited by all child resources in the assignment scope</li>
+      <li>Initiatives can be defined in Azure Portal or via command-line tools</li>
+      <li>New policies can be added to an initiative, and these will be applied without the need to re-assign the initiative</li>
+    </ul>
+  </li>
+  <li>Azure Blueprints
+    <ul>
+      <li>Azure Blueprints allow for the definition of controls at the organisational level</li>
+      <li>Blueprints ochestrate deployments including:
+        <ul>
+          <li>Role assignments</li>
+          <li>Policy assignments</li>
+          <li>ARM templates</li>
+          <li>Resource groups</li>
+        </ul>
+      </li>
+      <li>A Blueprint template can therefore contain policy and role assignments, ARM Templates and resource groups</li>
+      <li>Each component in a blueprint is termed an <strong>artifact</strong></li>
+      <li>Artifacts can have zero or more parameters</li>
+      <li>Parameter values can be set in the definition or during assignment</li>
+      <li>Several Blueprints exist for ISO 27001</li>
+    </ul>
+  </li>
+  <li>Cloud Adoption Framework
+    <ul>
+      <li>Consists of tools, documentation and proven practice to drive success during adoption of cloud computing on Azure</li>
+      <li>The following steps are included:
+        <ul>
+          <li>Define Your Strategy
+            <ol>
+              <li>Define and Document your Motivations - meet stakeholders and leadership</li>
+              <li>Document Business Outcomes - document your goals</li>
+              <li>Evaluate Financial Considerations - identify the return expected from the investment</li>
+              <li>Understand Technical Considerations</li>
+            </ol>
+          </li>
+          <li>Make a Plan
+            <ol>
+              <li>Digital Estate - inventory of existing assets</li>
+              <li>Initial Organisational Alignment - involve the right people</li>
+              <li>Skills Readiness Plan</li>
+              <li>Cloud Adoption Plan - shared cloud adoption goal</li>
+            </ol>
+          </li>
+          <li>Ready your Organisation
+            <ol>
+              <li>Azure Setup Guide</li>
+              <li>Azure Landing Zone - build subscriptions to support each major area of your business</li>
+              <li>Expand the Landing Zone</li>
+              <li>Best Practices</li>
+            </ol>
+          </li>
+          <li>Adopt the Cloud
+            <ol>
+              <li>Migrate
+                <ol>
+                  <li>Migrate your First Workload</li>
+                  <li>Migration Scenarios</li>
+                  <li>Best Practices</li>
+                  <li>Process Improvements</li>
+                </ol>
+              </li>
+              <li>Innovate
+                <ol>
+                  <li>Business Value Consensus - ensure innovations add value</li>
+                  <li>Azure Innovation Guide - build an MVP (Minimum Viable Product)</li>
+                  <li>Best Practices</li>
+                  <li>Feedback Loops</li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+          <li>Govern and Manage your Cloud Environments
+            <ol>
+              <li>Govern
+                <ol>
+                  <li>Methodology - consider end-state solution </li>
+                  <li>Benchmark</li>
+                  <li>Initial Governance Foundation - MVP</li>
+                  <li>Improve the Initial Governance Foundation - iteratively add governance controls</li>
+                </ol>
+              </li>
+              <li>Manage
+                <ol>
+                  <li>Establish a Managment Baseline - minimum commitment to operations management</li>
+                  <li>Define Business Commitments - document supported workloads and required management investments for each</li>
+                  <li>Expand the Management Baseline</li>
+                  <li>Advanced Operations and Design Principles</li>
+                </ol>
+              </li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Create a Subscription Governance Strategy
+    <ul>
+      <li>Teams often start their governance strategy at the subscription level</li>
+      <li>Three main aspects to consider:
+        <ol>
+          <li>Billing - take account of billing requirements when planning subscriptions. Use Tags if needed to identify billing department</li>
+          <li>Access Control - isolation of environments based on subscriptions</li>
+          <li>Subscription Limits - subscriptions have resource limitations: e.g. number of ExpressRoute connections</li>
+        </ol>
+      </li>
+    </ul>
+  <li>
+</ul>
+
+<h1 id="section1">Cost Management and SLAs</h1> <a href="#toc">Top</a>
+
+<h2>Cost Management</h2>
+<ul>
+  <li><a href="https://azure.microsoft.com/pricing/tco/calculator" target="#">TCO Calculator</a>
+    <ul>
+      <li>Define workloads - on-prem infrastructure</li>
+      <li>Adjust Assumptions - Software Assurance discounts, estimated on-prem costs</li>
+      <li>View the Report</li>
+    </ul>
+  </li>
+  <li>Purchase Azure Services
+    <ul>
+      <li>Enterprise Agreement - commitment to spend a pre-determined amount over a 3 year period</li>
+      <li>Web Direct - monthly billing by credit card or invoice</li>
+      <li>Cloud Solution Provider - bills come from CSP</li>
+    </ul>
+  </li>
+  <li>Cost Factors
+    <ul>
+      <li>Resource Type<li>
+      <li>Usage Meters</li>
+      <li>Resource Usage - deallocating versus deleting</li>
+      <li>Subscription Type</li>
+      <li>Marketplace Resources - prices set by vendor</li>
+      <li>Location - resources may have different prices in different regions. Network traffic can be reduced by choosing the closest region to your users</li>
+      <li>Zones - outbound data-transfer pricing based on zones</li>
+      <li>Dev/Test subscriptions - subscription with special pricing for Dev/Test workloads</li>
+    </ul>
+  </li>
+  <li><a href="https://azure.microsoft.com/pricing/calculator/" target="#">Azure Pricing Calculator</a>
+  </li>
+  <li>Azure Advisor - identifies unused or underutilised resources</li>
+  <li>Spending Limits</li>
+  <li>Azure Reservations - pre-pay for a resource for discounted pricing</li>
+  <li>Offers - monitor and switch to latest Azure customer and subscription offers</li>
+  <li>Cost Management and Billing
+    <ul>
+      <li>Free service to manage costs and billing</li>
+      <li>Setup Alerts and receive recommendations</li>
+    </ul>
+  </li>
+  <li>Tags - can be used to organise billing data</li>
+  <li>Resize VMs</li>
+  <li>Deallocate VMs out of hours</li>
+  <li>Delete unused resources</li>
+  <li>Prefer PaaS to IaaS services - usually cheaper</li>
+  <li>Azure Hybrid Benefit - Windows Server and SQL Server licences purchased with Software Assurance can be re-used on VMs in Azure</li>
+</ul>
+
+<h2>Service Level Agreements</h2>
+<ul>
+  <li>Formal agreement between service provider and customer</li>
+  <li>Accessible at <a href="https://azure.microsoft.com/support/legal/sla/" target="#">Service Level Agreements</a></li>
+  <li>SLA details focus on uptime, but can also include latency</li>
+  <li>Service credits are available if SLAs are not met</li>
+  <li>No SLAs for free services</li>
+  <li>Claims for service credits must be submitted by the end of the month following the outtage</li>
+  <li>An SLA of 99.9% equates to 10.1 minutes per week of downtime</li>
+  <li>Multiply the SLAs for each service in your application to calculate the application SLA value</li>
+  <li>Use availability zones to increase the uptime for a service - availability zones have different schedules for maintenance, and therefore overall downtime decreases</li>
+  <li>Duplication across regions to create redundancy and reduce overall downtime</li>
+</ul>
+
+<h2>Preview Features</h2>
+<ul>
+  <li>Preview features in Azure do not come with a warranty or SLA</li>
+  <li><a href="https://preview.portal.azure.com/" target="#">Azure Portal Previewi</a></li>
+  <li><a href="https://azure.microsoft.com/updates" target="#">Azure Updates</a></li>
+</ul>
