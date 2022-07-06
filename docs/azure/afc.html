@@ -22,19 +22,118 @@ permalink: /azure/afc
 <h1 id="section1">Core Concepts</h1> <a href="#toc">Top</a>
 <p>Cloud Computing - delivery of computing services over the internet</p>
 <ul>
+  <li>Cloud Models
+    <ul>
+      <li>Public Cloud - services available over the internet and available to anyone who wants to purchase them</li>
+      <li>Private Cloud - computing resources available exclusively to one business or organisation. Resources can be on-prem or hosted by a service provider</li>
+      <li>Hybrid Cloud - combines Public and Private Cloud by allowing resources to be shared across both</li>
+    </ul>
+  </li>
+  <li>Cloud Benefits
+    <ul>
+      <li>High Availability</li>
+      <li>Scalability - apps can scale vertically or horizontally:
+        <ul>
+          <li>vertically - add RAM or CPU to existing resource</li>
+          <li>horizontally - adding more instances of the resource</li>
+        </ul>
+      </li>
+      <li>Elasticity - autoscaling, so that apps always have resources to meet current demand</li>
+      <li>Agility - rapid deployment as needs change</li>
+      <li>Geo-Distribution - deploy apps to regions around the globe, to gain best performance for the region</li>
+      <li>Disaster Recovery - backup, data replication and geo-distribution protects data from disasters</li>
+    </ul>
+  </li>
   <li>pay-as-you-go pricing model
     <ul>
       <li>lower operating costs</li>
       <li>run infrastructure more efficiently</li>
       <li>scale as need changes</li>
+      <li>PAYG is considered Operational Expenditure (OpEx) as opposed to Capital Expenditure (CapEx) for Private Clouds</li>
     </ul>
   </li>
-  <li>deliver new features faster</li>
+  <li>Cloud Service Models
+    <ul>
+      <li>IaaS - provider configures hardware, but customer is responsible for OS and Networking</li>
+      <li>PaaS - provider configures platform, but customer is responsible for deploying applications to the environment. Development Tools, Databases and Business Analytics are PaaS offerings</li>
+      <li>SaaS - provider manages application environment, but customer is responsible for their data</li>
+    </ul>
+  </li>
   <li>Azure Portal
     <ul>
       <li>designed for resilience and availability</li>
       <li>available in every Azure Datacentre</li>
       <li>Continuously updated</li>
+    </ul>
+  </li>
+  <li>Regions and DataCentres
+    <ul>
+      <li>All hardware used in Azure is contained in datacentres distriubuted across the globe</li>
+      <li>Datacentres are group into Regions</li>
+      <li>Resources are deployed to Regions - no direct access to individual datacentres</li>
+      <li>A Region is a geographical area containing at least one, but usually more datacentres</li>
+      <li>Datacentres within a region are nearby and connected via a low-latency network</li>
+      <li>Availability Zones are physically separate datacentres within an Azure Region</li>
+      <li>Each Availability Zone consists of one or more datacentres with independant networking, power and cooling</li>
+      <li>Availability Zones within a Region are connected through high-speed, fibre-optic connections</li>
+      <li>Availability Zones act as isolation boundaries</li>
+      <li>Use availability zones to replicate applications and protect against outtages on a particular Availability Zone (local-redundancy or regional-redundancy)</li>
+      <li>Replication across availability zones increases costs by duplicating resources and data transfers between zones</li>
+      <li>Minimum of three zones per region</li>
+      <li>Zone-redundant services (SQL Database, zone-redundant storage) are automatically deployed across zones</li>
+      <li>Zonal services (VMs, managed disks, IP Address) are deployed to a specific zone, but can be replicated to other zones</li>
+      <li>Non-zonal services are globally available</li>
+      <li>Region Pairs
+        <ul>
+          <li>Each Azure Region is automatically paired with another region in the same geography, at least 300 miles away</li>
+          <li>Region pairs are physically connected</li>
+          <li>Allows for failover between regions (geo-redundancy), and protects from regional disasters</li>
+          <li>GRS - geo-redundant storage maintains three copies of the data in both regions, but data is only accessible from the primary copy</li>
+          <li>RA-GRS allows read-access from both regions simultaneously</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Azure Resource Manager
+    <ul>
+      <li>Azure Resource Manager is the deployment and management service for Azure</li>
+      <li>Resource Manager recieves requests from Azure tools (Portal, PowerShell, CLI), APIs and SDKs</li>
+      <li>Resource Manager authenticates and authorises the request, and then sends the request to the Azure service which takes the requested action</li>
+      <li>ARM templates are JSON files that allow you to manage resources declaratively</li>
+      <li>ARM templates allow you to deploy, manage and monitor resources as a group. Templates can be re-deployed through the development lifecycle</li>
+      <li>ARM templates can define dependancies between resources and apply access control through RBAC</li>
+    </ul>
+  </li>
+  <li>Subscriptions
+    <ul>
+      <li>A subscription is required to use Azure</li>
+      <li>Subscriptions are linked to an account. An account may have one or more subscriptions</li>
+      <li>A subscription can be used to define either a billing boundary or access-control boundary
+        <ul>
+          <li>Azure generates billing at the subscription level</li>
+          <li>Access-management policies are assigned at the subscription level</li>
+        </ul>
+      </li>
+      <li>Subscriptions can be used to separate
+        <ul>
+          <li>Environments</li>
+          <li>Departments</li>
+          <li>Billing</li>
+        </ul>
+      </li>
+      <li>Additional subscriptions can be used to overcome subscriptions limits: e.g. 10 ExpressRoute connections per subscription</li>
+      <li>Billing Profiles can be used to create invoice sections within the same billing account</li>
+    </ul>
+  </li>
+  <li>Management Groups
+    <ul>
+      <li>Used manage access, policies and compliance for multiple subscriptions</li>
+      <li>Subscriptions within a management group automatically inherit the governance conditions of the parent Management Groups. These conditions can not be overwritten at lower levels in the hierarchy</li>
+      <li>Subscriptions within a management group must trust the same Azure AD tenant</li>
+      <li>10,000 Management Groups limit in a single directory</li>
+      <li>A Management Group tree supports up to six levels of depth</li>
+      <li>Management Groups and Subscriptions can have only one direct parent</li>
+      <li>Management Groups and Subscriptions exist in a single hierarchy in each directory</li>
     </ul>
   </li>
   <li>Azure Marketplace
@@ -114,7 +213,7 @@ permalink: /azure/afc
   <li>Azure Virtual Network
     <ul>
       <li>Isolation and Segmentation - private IP address space using public or private IP address ranges. Public IP address are not internet routable</li>
-      <li>Internet communication - VMs can connect to the internet by default. To connect to the VM from the internet you can assig a Public IP address or putting the VM behind a public load balancer</li>
+      <li>Internet communication - VMs can connect to the internet by default. To connect to the VM from the internet you can assign a Public IP address or put the VM behind a public load balancer</li>
       <li>Communication between Azure resources - some services (VMs, App Services, AKS, VMSS) can communicate via the Virtual Network. Other services (CosmosDB, Service Bus, Key Vault, Storage Accounts, Azure SQL Db) require Service Endpoints</li>
       <li>Communication with On-Prem Services
         <ul>
@@ -133,9 +232,26 @@ permalink: /azure/afc
       <li>NSGs
         <ul>
           <li>Filter traffic to and from Azure resources within a VNet</li>
+          <li>Rules can be defined to control traffic into and out of:
+            <ol>
+              <li>a VNet</li>
+              <li>between Subnets</li>
+              <li>a VM</li>
+            </ol>
+          </li>
           <li>Can be associated with each subnet in the VNet</li>
           <li>Use <code>az network nsg list</code> command to list NSGs</li>
           <li>Use <code>az network nsg rule list</code> to inspect NSG rules</li>
+        </ul>
+      </li>
+      <li>ASGs
+        <ul>
+          <li>Application Security Groups</li>
+          <li>Group VMs based on application structure: databases, logic, web</li>
+          <li>ASG can be used in an NSG to allow or deny traffic</li>
+          <li>Members of an ASG must be on the same VNet</li>
+          <li>Where rules refer to two ASGs, they must both be on the same VNet</li>
+          <li>Only 3,000 ASGs allowed per subscription</li>
         </ul>
       </li>
       <li>Route Table - default route tables are created for each subnet in the VNet. Route tables can be added to customise routing</li>
@@ -200,7 +316,12 @@ permalink: /azure/afc
       <li>Protects against over-consumption of resources</li>
     </ul>
   </li>
-  <li>Azure Traffic Manager</li>
+  <li>Azure Traffic Manager
+    <ul>
+      <li>a DNS-Based traffic load balancer</li>
+      <li>lets you distribute traffic across global Azure regions</li>
+    </ul>
+  </li>
   <li>Azure ExpressRoute
     <ul>
       <li>extends on-prem network into Azure via a connectivity provider</li>
@@ -267,6 +388,35 @@ permalink: /azure/afc
   </li>
   <li>Azure Queue Storage</li>
   <li>Azure Table Storage</li>
+  <li>Data Box
+    <ul>
+      <li>Data Box is a physical storage device with a maximum capacity of 80TB</li>
+      <li>Use device to copy data to or from Azure Storage</li>
+      <li>Data Box can be used for: 
+        <ul>
+          <li>One-time migration - for large (>40TB) datasets</li>
+          <li>Initial bulk transfer - followed by incremental loads over the network or with Data Box Gateway</li>
+          <li>Periodic Uploads - where network connectivity is limited</li>
+        </ul>
+      </li>
+      <li>Data Box Gateway is a service that allows you to securely transfer large amounts of data to and from Data Box</li>
+      <li>Data Box Gateway consists of: 
+        <ul>
+          <li>a virtual device hosted on-prem</li>
+          <li>a gateway resource on Azure</li>
+          <li>a local Web UI for management and support</li>
+        </ul>
+      <li>Files can be copied to the gateway using SMB or NFS</li>
+      <li>Files written to the Gateway are transferred to Azure Storage</li>
+      <li>Data Box Gateway can be used to:
+        <ul>
+          <li>Cloud Archival - copy 100s TBs of data to Azure Storage</li>
+          <li>Continuous Data Ingestion</li>
+          <li>Incremental Transfers following a Bulk Transfer - incremental loads after an initial Data Box load</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
 
 <h2>Mobile - create backend services for iOS, Android and Windows apps</h2>
@@ -505,10 +655,17 @@ from Azure.</p>
   <li>Azure Portal</li>
   <li>Azure Mobile App</li>
   <li>Azure PowerShell</li>
-  <li>Azure CLI</li>
+  <li>Azure CLI
     <ul>
       <li>Good for one-off management, administrative or reporting tasks</li>
     </ul>
+  </li>
+  <li>CloudShell
+    <ul>
+      <li>Use PowerShell or Azure CLI from a Web browser or mobile phone</li>
+      <li>PowerShell in CloudShell runs on a Linux container</li>
+    </ul>
+  </li>
   <li>ARM Templates
     <ul>
       <li>Define infrastructure for repeatable deployments</li>
@@ -616,6 +773,7 @@ from Azure.</p>
     <ul>
       <li>VMs hosted on physical servers that are not shared with other customers</li>
       <li>Host groups provide for high availability</li>
+      <li>Charge is per dedicated host - not per VM running on the host</li>
     </ul>
   </li>
 </ul>
@@ -679,7 +837,7 @@ to an authenticated agent.</p>
   </li>
   <li>Resource Locks
     <ul>
-      <li>Prevents resources being accidentally deleted</li>
+      <li>Prevents resources being accidentally deleted or modified</li>
       <li>Accessible from the 'Locks' pane in the Azure Portal</li>
       <li>Two lock-types available
         <ul>
@@ -687,6 +845,7 @@ to an authenticated agent.</p>
           <li>Read - prevents deletion or modification</li>
         </ul>
       </li>
+      <li>Read locks can be used on resource groups to prevent additional resources being deployed</li>
     </ul>
   </li>
   <li>Resource Tags
