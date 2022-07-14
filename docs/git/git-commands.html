@@ -21,6 +21,7 @@ resgroup: "&lt;<i>resgroupname</i>&gt;"
   <li><a href="#section5">Tagging</a></li>
   <li><a href="#section6">Branches</a></li>
   <li><a href="#section7">Rebasing</a></li>
+  <li><a href="#section8">Reversing Changes</a></li>
 </ul>
 </div>
 
@@ -238,3 +239,44 @@ when the request is approved, the new commits can be applied without fear of mer
 <p>Rebasing whilst keeping all the changes applied in a branch will result in new commits being 
 created when the original commits are re-applied. This could cause a problem if someone else 
 has created work based on your original branch. The simple lesson from all this is <b>never rebase anything that you've pushed somewhere else.</b></p>
+
+<h1 id="section8">Reversing Changes</h1> <a href="#toc">Top</a>
+<p>HEAD is the symbolic name for the currently checked out commit. HEAD is normally attached to a branch
+but you can attach it to a commit:</p>
+<pre><code>
+git checkout commit_hash
+</code></pre>
+<p>Since commit hashes are awkward to work with, you can use relative refs to move around: </p>
+<ul>
+  <li>Use the carat symbol to move up one commit at a time</li>
+  <li>Use the tilde symbol followed by an integer to move upwards that integer number of time</li>
+</ul>
+<p>Thus you can move HEAD using relative refs. The following code moves HEAD back two commits before the $current_commit:</p>
+<pre><code>
+git checkout $current_commit
+git checkout HEAD^
+git checkout HEAD^
+</code></pre>
+<p>The same effect can be produced with:</p>
+<pre><code>
+git checkout HEAD~2
+</code></pre>
+<p>Instead of moving HEAD, you can reassign a branch to to a previous commit:</p>
+<pre><code>
+git branch -f main HEAD~3
+</pre></code>
+<p>This will move the main branch to three commits behind HEAD. Or you can move the branch forward to a specific commit hash:</p>
+<pre><code>
+git branch -f main $specific_commit
+</code></pre>
+<p>You can reverse changes by moving a branch reference backwards in time to an older commit:</p>
+<pre><code>
+git reset HEAD~1
+</code></pre>
+<p>'reset' works for local branches on your own machine. To reverse changes for remote branches 
+that others are using, use 'revert':</p>
+<pre><code>
+git revert HEAD
+</code></pre>
+<p>'revert' appends a new commit that has the effect of undoing the previous commit. This commit can be 
+pushed to the remote for others to pull</p>
