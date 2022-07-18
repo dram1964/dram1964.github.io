@@ -69,7 +69,7 @@ permalink: /azure/afc
   <li>Regions and DataCentres
     <ul>
       <li>All hardware used in Azure is contained in datacentres distriubuted across the globe</li>
-      <li>Datacentres are group into Regions</li>
+      <li>Datacentres are grouped into Regions</li>
       <li>Resources are deployed to Regions - no direct access to individual datacentres</li>
       <li>A Region is a geographical area containing at least one, but usually more datacentres</li>
       <li>Datacentres within a region are nearby and connected via a low-latency network</li>
@@ -883,7 +883,8 @@ to an authenticated agent.</p>
   <li>Azure Blueprints
     <ul>
       <li>Azure Blueprints allow for the definition of controls at the organisational level</li>
-      <li>Blueprints ochestrate deployments including:
+      <li>Each component in a blueprint is termed an <strong>artifact</strong></li>
+      <li>Blueprints ochestrate deployments and can include the following types of artifacts:
         <ul>
           <li>Role assignments</li>
           <li>Policy assignments</li>
@@ -891,11 +892,98 @@ to an authenticated agent.</p>
           <li>Resource groups</li>
         </ul>
       </li>
-      <li>A Blueprint template can therefore contain policy and role assignments, ARM Templates and resource groups</li>
-      <li>Each component in a blueprint is termed an <strong>artifact</strong></li>
       <li>Artifacts can have zero or more parameters</li>
       <li>Parameter values can be set in the definition or during assignment</li>
       <li>Several Blueprints exist for ISO 27001</li>
+      <li>Blueprints are backed by the globally available Cosmos DB</li>
+      <li>Unlike ARM templates, Blueprint definitions exist natively in Azure. The relationship between the definition and the assignment is preserved</li>
+      <li>When defining a Blueprint, you will also specify the location to save it to: either a Management Group or Subscription</li>
+      <li>Blueprint definitions begin in draft mode. Before they can be assigned they need to be published</li>
+      <li>Publishing involves assigning a Version string (up to 20 characters)</li>
+      <li>Each version of a single Blueprint can be assigned and different versions of the same Blueprint can be assigned to a subscription</li>
+      <li>When a published Blueprint is altered the original version is retained, along with unpublished changes. When the changes are published a new Version is assigned to the Blueprint definition</li>
+      <li>Blueprints can be assigned at the Management Group level but this needs to be done using the <a href="https://docs.microsoft.com/en-us/rest/api/blueprints/assignments/create-or-update?tabs=HTTP" target="#">REST API</a></li>
+      <li>Blueprint creation requires the following roles:
+        <ul>
+          <li>Microsoft.Blueprint/blueprints/write - Create a blueprint definition</li>
+          <li>Microsoft.Blueprint/blueprints/artifacts/write - Create artifacts on a blueprint definition</li>
+          <li>Microsoft.Blueprint/blueprints/versions/write - Publish a blueprint</li>
+        </ul>
+      </li>
+      <li>Blueprint deletion requires the following roles:
+        <ul>
+          <li>Microsoft.Blueprint/blueprints/delete</li>
+          <li>Microsoft.Blueprint/blueprints/artifacts/delete</li>
+          <li>Microsoft.Blueprint/blueprints/versions/delete</li>
+        </ul>
+      </li>
+      <li>Blueprint assignment requires the following roles:
+        <ul>
+          <li>Microsoft.Blueprint/blueprintAssignments/write - Assign a blueprint</li>
+          <li>Microsoft.Blueprint/blueprintAssignments/delete - Unassign a blueprint</li>
+        </ul>
+      </li>
+      <li>Built-in Roles also have Blueprint permissions:
+        <ul>
+          <li>Owner - all Blueprint related permissions</li>
+          <li>Contributor - can create and delete Blueprint defintions. No assignment permissions</li>
+          <li>Blueprint Contributor - can manage Blueprint definitions. No assignment permissions</li>
+          <li>Blueprint Operator - can assign published blueprints using a user-assigned managed identity. No permissions to create new Blueprint definitions</li>
+        </ul>
+      </li>
+      <li>Rules for Updating Assignments:
+        <ul>
+          <li>Role Assignments - if the role or assignee has changed, an new role assignment is created. Previously deployed roles are retained</li>
+          <li>Policy Assignments - assignment is updated if the parameters are changed. If the definition is changed a new policy assigment is created and the previous assignment is retained. If the policy assignment is removed from the blueprint, the previous assignment is retained</li>
+          <li>ARM Templates are deployed using a PUT request. Different resources will respond differently (update, replace) to this request</li>
+        </ul>
+      </li>
+      <li>Resource Locking in Blueprint Assignments
+        <ul>
+          <li>Resource locks applied by a Blueprint assignment are only applied to non-extension resources deployed by the blueprint. Existing resources do not have locks added to them</li>
+          <li>There are three locking modes available:
+            <ul>
+              <li>Don't Lock</li>
+              <li>Read Only</li>
+              <li>Do Not Delete</li>
+            </ul>
+          </li>
+          <li>Locking mode is applied during artifact deployment resulting from the assignment. A different locking mode can be set by updating the assignment or removed by deleting the assignment. The locking mode cannot be changed outside of Azure Blueprints</li>
+          <li>To prevent a subscription owner from changing the locking mode of a resource deployed during BP assignment, the assigment can be made at the Management Group level. Then only Owners of the management group can change the assignment. Blueprints assigned to a management group must still specify the subscription that the assignment targets and so is still applied at the subscription level</li>
+          <li>The locking mode will result in resources having one of four states depending on where the locking mode is assigned:
+            <ul>
+              <li>Not Locked - where 'Don't Lock' mode is selected in BP assignment</li>
+              <li>Cannot Edit/Delete - where 'Read Only' mode is set on the resource group. The resource group is Read Only, but Not Locked resources can be added, changed or deleted from the resource group</li>
+              <li>Read Only - where 'Read Only' mode is set on a resource deployed during the assignment</li>
+              <li>Cannot Delete - where 'Do Not Delete' is set on a resource deployed during the assignment. 'Not Locked' resources can be added, moved, changed or deleted from a resource group in 'Cannot Delete' state</li>
+            </ul>
+          </li>
+          <li>Read Only and Delete locks are implemented by Blueprints as RBAC 'deny' assignments. The deny assigments are added by the managed identity of the BP assignment, and can only be removed from the artifact resources by the same managed identity. Therefore the locks can only be removed from within Blueprints. During the assignment, specific principals can be excluded from the 'deny' assignments. Similarly, specific actions (read, write, etc) on specified resources can be excluded from the deny assignment</li>
+        </ul>
+      </li>
+      <li><a href="https://docs.microsoft.com/en-gb/azure/governance/blueprints/samples/caf-foundation/" target="#">CAF Foundation</a>
+        <ul>
+          <li>Deploys an Azure Key Vault to host secrets for VMs deployed in the shared services environment</li>
+          <li>Log Analytics is deployed to ensure all actions and services log to a central location</li>
+          <li>Defender Standard deployed</li>
+          <li>Policies
+            <ul>
+              <li>CostCenter Tag applied to Resource Groups</li>
+              <li>Append CostCenter Tag to Resources in Resource Groups</li>
+              <li>Allowed Region for Resources and Resource Groups</li>
+              <li>Allowed Storage Account and VM SKUs</li>
+              <li>Require Network Watcher to be Deployed</li>
+              <li>Require secure transfer encryption on Storage Accounts</li>
+              <li>Deny Resource Types</li>
+            </ul>
+          </li>
+          <li>Policy Initiatives
+            <ul>
+              <li>Enable Monitoring in Microsoft Defender for Cloud (100+ policy definitions)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>Cloud Adoption Framework
